@@ -1,4 +1,4 @@
-package methodutil
+package methods
 
 import (
 	"encoding/json"
