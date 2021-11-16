@@ -1,4 +1,4 @@
-module utils
+module bitbucket.org/shadowchef/utils
 
 go 1.17
 
