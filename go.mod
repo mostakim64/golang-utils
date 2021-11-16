@@ -1,4 +1,4 @@
-module shadowchef_util
+module utils
 
 go 1.17
 
