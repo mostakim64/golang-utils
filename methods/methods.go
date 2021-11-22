@@ -157,7 +157,7 @@ func StructToStruct(input interface{}, output interface{}) error {
 	}
 }
 
-// remove suffix from the string if string ends with the suffix
+// TrimSuffix remove suffix from the string if string ends with the suffix
 func TrimSuffix(s, suffix string) string {
 	if ok := strings.HasSuffix(s, suffix); ok {
 		s = s[:len(s)-len(suffix)]
