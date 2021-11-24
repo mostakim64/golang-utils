@@ -210,12 +210,12 @@ func DayAvailabilityToMask(availability []int) int {
 	return mask
 }
 
-func DayAvailabilityFromMask(mask int) []*int {
-	availability := []*int{}
+func DayAvailabilityFromMask(mask int) []int {
+	availability := []int{}
 
 	for i := 0; i < 7; i++ {
-		if mask&1<<i > 0 {
-			availability = append(availability, &i)
+		if mask&(1<<i) > 0 {
+			availability = append(availability, i)
 		}
 	}
 
