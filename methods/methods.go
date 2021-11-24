@@ -106,12 +106,6 @@ func Round(x float64) float64 {
 	return math.Round(x*100) / 100
 }
 
-func PrettyPrint(msg string, data interface{}) {
-	if r, err := json.MarshalIndent(&data, "", "  "); err == nil {
-		fmt.Printf("[INFO] %v %v: \n %v\n", time.Now(), msg, string(r))
-	}
-}
-
 func Contains(s []uint, item uint) bool {
 	for _, v := range s {
 		if v == item {
@@ -196,4 +190,34 @@ func Unique(arr []int) []int {
 	}
 
 	return unique
+}
+
+func PrettyPrint(msg string, data interface{}) {
+	if r, err := json.MarshalIndent(&data, "", "  "); err == nil {
+		fmt.Printf("[INFO] %v %v: \n %v\n", time.Now(), msg, string(r))
+	}
+}
+
+func DayAvailabilityToMask(availability []int) int {
+	mask := 0
+
+	for i := 0; i < 7; i++ {
+		if InArray(i, availability) {
+			mask = mask + int(math.Pow(2, float64(i)))
+		}
+	}
+
+	return mask
+}
+
+func DayAvailabilityFromMask(mask int) []*int {
+	availability := []*int{}
+
+	for i := 0; i < 7; i++ {
+		if mask&1<<i > 0 {
+			availability = append(availability, &i)
+		}
+	}
+
+	return availability
 }
