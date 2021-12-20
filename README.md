@@ -1,20 +1,25 @@
 
 # Shadowchef Utils
 
-Some utils functions and logger have been integrated here. 
+Some common utils functions and log functions have been written here for common usage on other services. 
 
 ## Installation
+Configure `.gitconfig` to include the below code
+```
+[url "git@bitbucket.org:"]
+        insteadOf = https://bitbucket.org/
 
-Install Utils with go mod.
+# this will enable the use of ssh version of the repo url instead of https.
+```
+
+Install Utils with `go get`.
 
 ```bash
-  GOPRIVATE=bitbucket.org/shadowchef/utils go get bitbucket.org/shadowchef/utils
+GOPRIVATE=bitbucket.org/shadowchef/utils go get bitbucket.org/shadowchef/utils
 ```
-    
-## Running Tests
 
-
-
+## Useage
+### Methods package
 ```go
 package main
 import (
@@ -28,9 +33,23 @@ func main() {
 }
 ```
 
+### Logger package
+```go
+package main
+import (
+	"fmt"
+
+	"bitbucket.org/shadowchef/utils/logger"
+)
+
+func main() {
+	logger.Info("put your message here...")
+}
+```
+
 To run tests, run the following command
 
 ```bash
-  go run main.go
+go run main.go
 ```
 
