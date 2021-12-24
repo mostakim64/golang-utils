@@ -221,3 +221,22 @@ func DayAvailabilityFromMask(mask int) []int {
 
 	return availability
 }
+
+func Abbreviate(s string) string {
+	// Split the given string without condition
+	words := strings.Fields(s)
+	var result string
+
+	for i := 0; i < len(words); i++ {
+		if strings.IndexAny(words[i], "-") > 0 {
+			// Split the string if it matches "-" char, convert them to upperCase
+			split := strings.Split(strings.ToUpper(words[i]), "-")
+			for j := 0; j < len(split); j++ {
+				result += strings.ToUpper(string(split[j][0]))
+			}
+		} else {
+			result += string(strings.ToUpper(string(words[i][0])))
+		}
+	}
+	return result
+}
