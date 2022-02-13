@@ -1,6 +1,9 @@
 package methods
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"math"
@@ -235,8 +238,42 @@ func Abbreviate(s string) string {
 				result += strings.ToUpper(string(split[j][0]))
 			}
 		} else {
-			result += string(strings.ToUpper(string(words[i][0])))
+			result += strings.ToUpper(string(words[i][0]))
 		}
 	}
 	return result
+}
+
+var initialVector = []byte{35, 46, 57, 24, 85, 35, 24, 74, 87, 35, 88, 98, 66, 32, 14, 05}
+
+func EncryptAES(key, plaintext string) (string, error) {
+	block, err := aes.NewCipher([]byte(key))
+	if err != nil {
+		return "", err
+	}
+
+	bytes := []byte(plaintext)
+	cfb := cipher.NewCFBEncrypter(block, initialVector)
+	cipherText := make([]byte, len(bytes))
+	cfb.XORKeyStream(cipherText, bytes)
+
+	return base64.StdEncoding.EncodeToString(cipherText), nil
+}
+
+func DecryptAES(key, encryptedText string) (string, error) {
+	block, err := aes.NewCipher([]byte(key))
+	if err != nil {
+		return "", err
+	}
+
+	cipherText, err := base64.StdEncoding.DecodeString(encryptedText)
+	if err != nil {
+		return "", err
+	}
+
+	cfb := cipher.NewCFBDecrypter(block, initialVector)
+	plainText := make([]byte, len(cipherText))
+	cfb.XORKeyStream(plainText, cipherText)
+
+	return string(plainText), nil
 }
