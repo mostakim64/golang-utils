@@ -6,7 +6,7 @@ type SlackRequestBody struct {
 type Text struct {
 	Type  string `json:"type"`
 	Text  string `json:"text"`
-	Emoji *bool   `json:"emoji"`
+	Emoji *bool   `json:"emoji,omitempty"`
 }
 type Fields struct {
 	Type string `json:"type,omitempty"`

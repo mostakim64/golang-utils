@@ -60,7 +60,7 @@ func generateFields(typ string, txt string) *Fields {
 	return &field
 }
 
-func (sc *slackitClient) SendSlackNotification(serviceName string , summary string, details string) error {
+func (sc *slackitClient) SendSlackNotification(serviceName string , summary string, details string, metadata string) error {
 
 	currentTime := time.Now()
 
@@ -72,7 +72,7 @@ func (sc *slackitClient) SendSlackNotification(serviceName string , summary stri
 
 	headerBlock := generateSingleBlock("header", headerText)
 
-	serviceNameField := generateFields("mrkdwn", "*Service:*\nStorage")
+	serviceNameField := generateFields("mrkdwn", "*Service:*\n"+serviceName)
 
 	serviceLogTimeField := generateFields("mrkdwn", "*Created At:*\n"+currentTimeStr)
 
@@ -86,7 +86,6 @@ func (sc *slackitClient) SendSlackNotification(serviceName string , summary stri
 	detailsArr := Chunks(details, 1000)
 
 	for ind, detail := range detailsArr{
-		//detailsField := generateFields("mrkdwn", "*Details:*\n"+detail)
 		if ind == 0 {
 			detailsField := generateFields("mrkdwn", "*Details:*\n")
 			detailsBlock := generateSectionBlock([]*Fields{detailsField})
@@ -97,15 +96,10 @@ func (sc *slackitClient) SendSlackNotification(serviceName string , summary stri
 		detailsBlocks = append(detailsBlocks, detailsBlock)
 	}
 
-	//detailsField := generateFields("mrkdwn", "*Details:*\n"+detailsArr[0])
-	//detailsBlock := generateSectionBlock([]*Fields{detailsField})
-	//detailsBlocks = append(detailsBlocks, detailsBlock)
-	//
-	//detailsField = generateFields("mrkdwn", "*Details:*\n"+detailsArr[1])
-	//detailsBlock = generateSectionBlock([]*Fields{detailsField})
-	//detailsBlocks = append(detailsBlocks, detailsBlock)
+	metadataText := generateText("mrkdwn","*Metadata:*\n"+ metadata, nil)
+	metadataBlock := generateSingleBlock("section",metadataText)
 
-	blocks := []Blocks{headerBlock, serviceInfoBlock, summaryBlock}
+	blocks := []Blocks{headerBlock, serviceInfoBlock, summaryBlock, metadataBlock}
 
 	for ind, block := range detailsBlocks {
 		if ind < 30 {
