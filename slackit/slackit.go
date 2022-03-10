@@ -11,13 +11,8 @@ import (
 
 var client slackitClient
 
-
 type slackitClient struct {
 	webhookUrl string
-}
-
-func Slackit() slackitClient {
-	return client
 }
 
 func NewSlackitClient(webhookUrl string) slackitClient{
@@ -27,92 +22,10 @@ func NewSlackitClient(webhookUrl string) slackitClient{
 	return client
 }
 
-func generateSingleBlock(typ string, text *Text) Blocks {
-	block := Blocks{
-		Type: typ,
-		Text: text,
-	}
-	return block
-}
+func (sc *slackitClient) Send(clientReq ClientRequest) error {
 
-func generateSectionBlock(fields []*Fields) Blocks {
-	block := Blocks{
-		Type: "section",
-		Fields: fields,
-	}
-	return block
-}
-
-func generateText(typ string, txt string, emoji *bool) *Text{
-	text := Text{
-		Type: typ,
-		Text: txt,
-		Emoji: emoji,
-	}
-	return &text
-}
-
-func generateFields(typ string, txt string) *Fields {
-	field := Fields{
-		Type: typ,
-		Text: txt,
-	}
-	return &field
-}
-
-func (sc *slackitClient) Send(serviceName string , summary string, details string, metadata string) error {
-
-	currentTime := time.Now()
-
-	currentTimeStr := currentTime.Format("2006-01-02 15:04:05")
-
-	emoji := true
-
-	headerText := generateText("plain_text", "New Alert", &emoji)
-
-	headerBlock := generateSingleBlock("header", headerText)
-
-	serviceNameField := generateFields("mrkdwn", "*Service:*\n"+serviceName)
-
-	serviceLogTimeField := generateFields("mrkdwn", "*Created At:*\n"+currentTimeStr)
-
-	serviceInfoBlock := generateSectionBlock([]*Fields{serviceNameField, serviceLogTimeField})
-
-	summaryField := generateFields("mrkdwn", "*Summary:*\n"+summary)
-
-	summaryBlock := generateSectionBlock([]*Fields{summaryField})
-
-	var detailsBlocks []Blocks
-	detailsArr := Chunks(details, 2000)
-
-	for ind, detail := range detailsArr{
-		if ind == 0 {
-			detailsField := generateFields("mrkdwn", "*Details:*\n")
-			detailsBlock := generateSectionBlock([]*Fields{detailsField})
-			detailsBlocks = append(detailsBlocks, detailsBlock)
-		}
-		detailsText := generateText("mrkdwn", "```"+detail+"```", nil)
-		detailsBlock := generateSingleBlock("section",detailsText)
-		detailsBlocks = append(detailsBlocks, detailsBlock)
-	}
-
-	metadataText := generateText("mrkdwn","*Metadata:*\n"+ metadata, nil)
-	metadataBlock := generateSingleBlock("section",metadataText)
-
-	blocks := []Blocks{headerBlock, serviceInfoBlock, summaryBlock, metadataBlock}
-
-	for ind, block := range detailsBlocks {
-		if ind < 45 {
-			blocks = append(blocks, block)
-		}
-	}
-
-	attachment := Attachments{
-		Color: "#f2c744",
-		Blocks: blocks,
-	}
-
-	slackBody, _ := json.Marshal(SlackRequestBody{Attachments: []Attachments{attachment}})
+	attachments := PrepareAttachmentBody(clientReq)
+	slackBody, _ := json.Marshal(SlackRequestBody{Attachments: attachments})
 	req, err := http.NewRequest(http.MethodPost, sc.webhookUrl, bytes.NewBuffer(slackBody))
 	if err != nil {
 		return err
@@ -136,26 +49,4 @@ func (sc *slackitClient) Send(serviceName string , summary string, details strin
 		return errors.New("non-ok response returned from slack")
 	}
 	return nil
-}
-
-func Chunks(s string, chunkSize int) []string {
-	if len(s) == 0 {
-		return nil
-	}
-	if chunkSize >= len(s) {
-		return []string{s}
-	}
-	var chunks []string = make([]string, 0, (len(s)-1)/chunkSize+1)
-	currentLen := 0
-	currentStart := 0
-	for i := range s {
-		if currentLen == chunkSize {
-			chunks = append(chunks, s[currentStart:i])
-			currentLen = 0
-			currentStart = i
-		}
-		currentLen++
-	}
-	chunks = append(chunks, s[currentStart:])
-	return chunks
 }
