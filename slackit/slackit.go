@@ -22,6 +22,7 @@ func NewSlackitClient(webhookUrl string) slackitClient{
 	return client
 }
 
+// Send will call api to send a message to the slack channel
 func (sc *slackitClient) Send(clientReq ClientRequest) error {
 
 	attachments := PrepareAttachmentBody(clientReq)

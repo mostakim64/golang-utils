@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-func generateSingleBlock(typ string, text *Text) Blocks {
+// addSingleBlock will add a single column block
+func addSingleBlock(typ string, text *Text) Blocks {
 	block := Blocks{
 		Type: typ,
 		Text: text,
@@ -13,7 +14,8 @@ func generateSingleBlock(typ string, text *Text) Blocks {
 	return block
 }
 
-func generateSectionBlock(fields []*Fields) Blocks {
+// addSectionBlock will add a multi-column block
+func addSectionBlock(fields []*Fields) Blocks {
 	block := Blocks{
 		Type: "section",
 		Fields: fields,
@@ -21,7 +23,8 @@ func generateSectionBlock(fields []*Fields) Blocks {
 	return block
 }
 
-func generateText(typ string, txt string, emoji *bool) *Text{
+// addText will generate a text of type plain_text/mrkdwn
+func addText(typ string, txt string, emoji *bool) *Text{
 	text := Text{
 		Type: typ,
 		Text: txt,
@@ -30,7 +33,8 @@ func generateText(typ string, txt string, emoji *bool) *Text{
 	return &text
 }
 
-func generateFields(typ string, txt string) *Fields {
+// addField will add a field of type mrkdwn
+func addField(typ string, txt string) *Fields {
 	field := Fields{
 		Type: typ,
 		Text: txt,
@@ -38,6 +42,7 @@ func generateFields(typ string, txt string) *Fields {
 	return &field
 }
 
+// PrepareAttachmentBody will prepare whole Attachment body
 func PrepareAttachmentBody(req ClientRequest) []Attachments {
 
 	serviceName := req.ServiceName
@@ -58,36 +63,37 @@ func PrepareAttachmentBody(req ClientRequest) []Attachments {
 
 	emoji := true
 
-	headerText := generateText("plain_text", "New Alert", &emoji)
+	headerText := addText("plain_text", "New Alert", &emoji)
 
-	headerBlock := generateSingleBlock("header", headerText)
+	headerBlock := addSingleBlock("header", headerText)
 
-	serviceNameField := generateFields("mrkdwn", "*Service:*\n"+serviceName)
+	serviceNameField := addField("mrkdwn", "*Service:*\n"+serviceName)
 
-	serviceLogTimeField := generateFields("mrkdwn", "*Created At:*\n"+currentTimeStr)
+	serviceLogTimeField := addField("mrkdwn", "*Created At:*\n"+currentTimeStr)
 
-	serviceInfoBlock := generateSectionBlock([]*Fields{serviceNameField, serviceLogTimeField})
+	serviceInfoBlock := addSectionBlock([]*Fields{serviceNameField, serviceLogTimeField})
 
-	summaryField := generateFields("mrkdwn", "*Summary:*\n"+summary)
+	summaryField := addField("mrkdwn", "*Summary:*\n"+summary)
 
-	summaryBlock := generateSectionBlock([]*Fields{summaryField})
+	summaryBlock := addSectionBlock([]*Fields{summaryField})
 
 	var detailsBlocks []Blocks
 	detailsArr := methods.Chunks(details, 2000)
 
+
 	for ind, detail := range detailsArr{
 		if ind == 0 {
-			detailsField := generateFields("mrkdwn", "*Details:*\n")
-			detailsBlock := generateSectionBlock([]*Fields{detailsField})
+			detailsField := addField("mrkdwn", "*Details:*\n")
+			detailsBlock := addSectionBlock([]*Fields{detailsField})
 			detailsBlocks = append(detailsBlocks, detailsBlock)
 		}
-		detailsText := generateText("mrkdwn", "```"+detail+"```", nil)
-		detailsBlock := generateSingleBlock("section",detailsText)
+		detailsText := addText("mrkdwn", "```"+detail+"```", nil)
+		detailsBlock := addSingleBlock("section",detailsText)
 		detailsBlocks = append(detailsBlocks, detailsBlock)
 	}
 
-	metadataText := generateText("mrkdwn","*Metadata:*\n"+ metadata, nil)
-	metadataBlock := generateSingleBlock("section",metadataText)
+	metadataText := addText("mrkdwn","*Metadata:*\n"+ metadata, nil)
+	metadataBlock := addSingleBlock("section",metadataText)
 
 	blocks := []Blocks{headerBlock, serviceInfoBlock, summaryBlock, metadataBlock}
 
