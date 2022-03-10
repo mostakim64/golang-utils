@@ -3,12 +3,11 @@ package slackit
 const (
 	Success = iota + 1
 	Warning
-	Error
-
+	Alert
 )
 
 var StatusMap = map[int]string{
-	Success : "#00FF00",
-	Warning : "#FFFF00",
-	Error : "#FF0000",
+	Success: "#00663a",
+	Warning: "#eda200",
+	Alert:   "#9e0505",
 }

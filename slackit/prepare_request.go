@@ -42,6 +42,22 @@ func addField(typ string, txt string) *Fields {
 	return &field
 }
 
+func getHeader(status int) string {
+	var headerTitle string
+
+	switch status {
+	case Success:
+		headerTitle = "Success"
+	case Warning:
+		headerTitle = "Warning"
+	case Alert:
+		headerTitle = "Alert"
+	default:
+		headerTitle = "Warning"
+	}
+	return headerTitle
+}
+
 // PrepareAttachmentBody will prepare whole Attachment body
 func PrepareAttachmentBody(req ClientRequest) []Attachments {
 
@@ -50,6 +66,8 @@ func PrepareAttachmentBody(req ClientRequest) []Attachments {
 	metadata := req.Metadata
 	details := req.Details
 	status := req.Status
+
+	headerTitle := getHeader(status)
 
 	color := StatusMap[Warning]
 
@@ -63,7 +81,7 @@ func PrepareAttachmentBody(req ClientRequest) []Attachments {
 
 	emoji := true
 
-	headerText := addText("plain_text", "New Alert", &emoji)
+	headerText := addText("plain_text", headerTitle, &emoji)
 
 	headerBlock := addSingleBlock("header", headerText)
 
