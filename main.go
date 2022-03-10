@@ -13,7 +13,7 @@ func main() {
 	metadata := "metadata"
 	slackitClient := slackit.NewSlackitClient(webhookUrl)
 
-	err := slackitClient.SendSlackNotification(serviceName, summary, details, metadata)
+	err := slackitClient.Send(serviceName, summary, details, metadata)
 	if err != nil {
 		fmt.Print("Error occurred sending message to slack ", err)
 	}

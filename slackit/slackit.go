@@ -60,7 +60,7 @@ func generateFields(typ string, txt string) *Fields {
 	return &field
 }
 
-func (sc *slackitClient) SendSlackNotification(serviceName string , summary string, details string, metadata string) error {
+func (sc *slackitClient) Send(serviceName string , summary string, details string, metadata string) error {
 
 	currentTime := time.Now()
 
@@ -83,7 +83,7 @@ func (sc *slackitClient) SendSlackNotification(serviceName string , summary stri
 	summaryBlock := generateSectionBlock([]*Fields{summaryField})
 
 	var detailsBlocks []Blocks
-	detailsArr := Chunks(details, 1000)
+	detailsArr := Chunks(details, 2000)
 
 	for ind, detail := range detailsArr{
 		if ind == 0 {
@@ -91,7 +91,7 @@ func (sc *slackitClient) SendSlackNotification(serviceName string , summary stri
 			detailsBlock := generateSectionBlock([]*Fields{detailsField})
 			detailsBlocks = append(detailsBlocks, detailsBlock)
 		}
-		detailsText := generateText("plain_text", detail, &emoji)
+		detailsText := generateText("mrkdwn", "```"+detail+"```", nil)
 		detailsBlock := generateSingleBlock("section",detailsText)
 		detailsBlocks = append(detailsBlocks, detailsBlock)
 	}
@@ -102,7 +102,7 @@ func (sc *slackitClient) SendSlackNotification(serviceName string , summary stri
 	blocks := []Blocks{headerBlock, serviceInfoBlock, summaryBlock, metadataBlock}
 
 	for ind, block := range detailsBlocks {
-		if ind < 30 {
+		if ind < 45 {
 			blocks = append(blocks, block)
 		}
 	}
