@@ -47,6 +47,39 @@ func main() {
 }
 ```
 
+### slackit package
+```go
+package main
+
+import (
+	"bitbucket.org/shadowchef/utils/slackit"
+	"fmt"
+)
+
+func main() {
+	webhookUrl := "https://hooks.slack.com/services/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"
+	summary := "Alert Summary"
+	details := "Details"
+	serviceName := "Storage"
+	metadata := "metadata"
+	slackitClient := slackit.NewSlackitClient(webhookUrl)
+
+	clientReq := slackit.ClientRequest{
+		ServiceName: serviceName,
+		Summary: summary,
+		Metadata: metadata,
+		Details: details,
+		Status: slackit.Alert,
+	}
+
+	err := slackitClient.Send(clientReq)
+	if err != nil {
+		fmt.Print("Alert occurred sending message to slack: ", err)
+	}
+}
+```
+
+
 To run tests, run the following command
 
 ```bash
