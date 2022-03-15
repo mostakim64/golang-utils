@@ -63,6 +63,7 @@ import (
 
 func main() {
 	webhookUrl := "https://hooks.slack.com/services/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"
+	header := "Alert"
 	summary := "Alert Summary"
 	details := "Details"
 	serviceName := "Storage"
@@ -70,6 +71,7 @@ func main() {
 	slackitClient := slackit.NewSlackitClient(webhookUrl)
 
 	clientReq := slackit.ClientRequest{
+		Header: header,
 		ServiceName: serviceName,
 		Summary: summary,
 		Metadata: metadata,
