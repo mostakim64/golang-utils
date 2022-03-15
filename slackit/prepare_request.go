@@ -73,6 +73,10 @@ func PrepareAttachmentBody(req ClientRequest) []Attachments {
 		headerTitle = req.Header
 	}
 
+	if status == Alert {
+		summary = summary + " @here"
+	}
+
 	color := StatusMap[Warning]
 
 	if v, ok := StatusMap[status]; ok {
