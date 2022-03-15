@@ -69,6 +69,10 @@ func PrepareAttachmentBody(req ClientRequest) []Attachments {
 
 	headerTitle := getHeader(status)
 
+	if req.Header != "" {
+		headerTitle = req.Header
+	}
+
 	color := StatusMap[Warning]
 
 	if v, ok := StatusMap[status]; ok {

@@ -1,8 +1,9 @@
 package slackit
 
-import 	v "github.com/go-ozzo/ozzo-validation/v4"
+import v "github.com/go-ozzo/ozzo-validation/v4"
 
 type ClientRequest struct {
+	Header      string `json:"header"`
 	ServiceName string `json:"service_name"`
 	Summary     string `json:"summary"`
 	Metadata    string `json:"metadata"`
