@@ -12,13 +12,18 @@ Configure `.gitconfig` to include the below code
 # this will enable the use of ssh version of the repo url instead of https.
 ```
 
+To setup private bitbucket cloud
+```
+git config --global url."git@bitbucket.org:shadowchef".insteadOf "https://bitbucket.org/shadowchef"
+```
+
 Install Utils with `go get`.
 
 ```bash
 GOPRIVATE=bitbucket.org/shadowchef/utils go get bitbucket.org/shadowchef/utils
 ```
 
-## Useage
+## Usage
 ### Methods package
 ```go
 package main
