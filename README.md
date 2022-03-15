@@ -12,13 +12,18 @@ Configure `.gitconfig` to include the below code
 # this will enable the use of ssh version of the repo url instead of https.
 ```
 
+To setup private bitbucket cloud
+```
+git config --global url."git@bitbucket.org:shadowchef".insteadOf "https://bitbucket.org/shadowchef"
+```
+
 Install Utils with `go get`.
 
 ```bash
 GOPRIVATE=bitbucket.org/shadowchef/utils go get bitbucket.org/shadowchef/utils
 ```
 
-## Useage
+## Usage
 ### Methods package
 ```go
 package main
@@ -58,6 +63,7 @@ import (
 
 func main() {
 	webhookUrl := "https://hooks.slack.com/services/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"
+	header := "Alert"
 	summary := "Alert Summary"
 	details := "Details"
 	serviceName := "Storage"
@@ -65,6 +71,7 @@ func main() {
 	slackitClient := slackit.NewSlackitClient(webhookUrl)
 
 	clientReq := slackit.ClientRequest{
+		Header: header,
 		ServiceName: serviceName,
 		Summary: summary,
 		Metadata: metadata,
