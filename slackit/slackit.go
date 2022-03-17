@@ -9,21 +9,21 @@ import (
 	"time"
 )
 
-var client slackitClient
+var client SlackitClient
 
-type slackitClient struct {
+type SlackitClient struct {
 	webhookUrl string
 }
 
-func NewSlackitClient(webhookUrl string) slackitClient{
-	client = slackitClient{
+func NewSlackitClient(webhookUrl string) SlackitClient {
+	client = SlackitClient{
 		webhookUrl: webhookUrl,
 	}
 	return client
 }
 
 // Send will call api to send a message to the slack channel
-func (sc *slackitClient) Send(clientReq ClientRequest) error {
+func (sc *SlackitClient) Send(clientReq ClientRequest) error {
 
 	if err := clientReq.Validate(); err != nil {
 		return err
