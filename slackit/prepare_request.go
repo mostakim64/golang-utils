@@ -17,17 +17,17 @@ func addSingleBlock(typ string, text *Text) Blocks {
 // addSectionBlock will add a multi-column block
 func addSectionBlock(fields []*Fields) Blocks {
 	block := Blocks{
-		Type: "section",
+		Type:   "section",
 		Fields: fields,
 	}
 	return block
 }
 
 // addText will generate a text of type plain_text/mrkdwn
-func addText(typ string, txt string, emoji *bool) *Text{
+func addText(typ string, txt string, emoji *bool) *Text {
 	text := Text{
-		Type: typ,
-		Text: txt,
+		Type:  typ,
+		Text:  txt,
 		Emoji: emoji,
 	}
 	return &text
@@ -66,6 +66,7 @@ func PrepareAttachmentBody(req ClientRequest) []Attachments {
 	metadata := req.Metadata
 	details := req.Details
 	status := req.Status
+	mentions := req.Mentions
 
 	headerTitle := getHeader(status)
 
@@ -73,8 +74,13 @@ func PrepareAttachmentBody(req ClientRequest) []Attachments {
 		headerTitle = req.Header
 	}
 
-	if status == Alert {
-		summary = summary + " @here"
+	if len(mentions) > 0 {
+		mentionString := ""
+		for _, m := range mentions {
+			mentionString = mentionString + " " + m
+		}
+
+		summary = summary + mentionString
 	}
 
 	color := StatusMap[Warning]
@@ -106,20 +112,19 @@ func PrepareAttachmentBody(req ClientRequest) []Attachments {
 	var detailsBlocks []Blocks
 	detailsArr := methods.Chunks(details, 2000)
 
-
-	for ind, detail := range detailsArr{
+	for ind, detail := range detailsArr {
 		if ind == 0 {
 			detailsField := addField("mrkdwn", "*Details:*\n")
 			detailsBlock := addSectionBlock([]*Fields{detailsField})
 			detailsBlocks = append(detailsBlocks, detailsBlock)
 		}
 		detailsText := addText("mrkdwn", "```"+detail+"```", nil)
-		detailsBlock := addSingleBlock("section",detailsText)
+		detailsBlock := addSingleBlock("section", detailsText)
 		detailsBlocks = append(detailsBlocks, detailsBlock)
 	}
 
-	metadataText := addText("mrkdwn","*Metadata:*\n"+ metadata, nil)
-	metadataBlock := addSingleBlock("section",metadataText)
+	metadataText := addText("mrkdwn", "*Metadata:*\n"+metadata, nil)
+	metadataBlock := addSingleBlock("section", metadataText)
 
 	blocks := []Blocks{headerBlock, serviceInfoBlock, summaryBlock, metadataBlock}
 
@@ -130,7 +135,7 @@ func PrepareAttachmentBody(req ClientRequest) []Attachments {
 	}
 
 	attachment := Attachments{
-		Color: color,
+		Color:  color,
 		Blocks: blocks,
 	}
 
