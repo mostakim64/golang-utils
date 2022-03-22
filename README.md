@@ -68,6 +68,8 @@ func main() {
 	details := "Details"
 	serviceName := "Storage"
 	metadata := "metadata"
+	mentions := []string{"@here", "@there"}
+	
 	slackitClient := slackit.NewSlackitClient(webhookUrl)
 
 	clientReq := slackit.ClientRequest{
@@ -77,6 +79,7 @@ func main() {
 		Metadata: metadata,
 		Details: details,
 		Status: slackit.Alert,
+		Mentions:    mentions,
 	}
 
 	err := slackitClient.Send(clientReq)
