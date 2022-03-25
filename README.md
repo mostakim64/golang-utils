@@ -89,6 +89,23 @@ func main() {
 }
 ```
 
+### monitor package
+
+```go
+package main
+
+import (
+	"bitbucket.org/shadowchef/utils/monitor"
+	"github.com/labstack/echo-contrib/prometheus"
+	"github.com/labstack/echo/v4"
+)
+
+func main() {
+	e := echo.New()
+	monitor.NewEchoPrometheusClient(e, "/metrics")
+}
+```
+
 
 To run tests, run the following command
 
