@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/labstack/echo-contrib v0.12.0
+	github.com/labstack/echo/v4 v4.7.0
 	github.com/sirupsen/logrus v1.8.1
 )
 
@@ -13,7 +14,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/labstack/echo/v4 v4.7.0 // indirect
 	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect

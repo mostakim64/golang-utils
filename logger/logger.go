@@ -1,13 +1,25 @@
 package logger
 
 import (
+	"bitbucket.org/shadowchef/utils/slackit"
+	"bytes"
 	"fmt"
+	"reflect"
 	"runtime"
 
 	"github.com/sirupsen/logrus"
 )
 
 var logger = logrus.New()
+
+var slackitClient slackit.SlackitClient
+var serviceName string
+
+func NewSlackLogitClient(webhookUrl, service string) error {
+	slackitClient = slackit.NewSlackitClient(webhookUrl)
+	serviceName = service
+	return nil
+}
 
 // Fields wraps logrus.Fields, which is a map[string]interface{}
 type Fields logrus.Fields
@@ -80,6 +92,10 @@ func Error(args ...interface{}) {
 		entry := logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = fileInfo(2)
 		entry.Error(args...)
+		for _, arg := range args {
+			sendToSlack(arg)
+		}
+
 	}
 }
 
@@ -141,4 +157,29 @@ func fileInfo(skip int) string {
 	//	}
 	//}
 	return fmt.Sprintf("%s:%d", file, line)
+}
+
+func sendToSlack(args ...interface{} ) {
+
+	var errMsgBuffer bytes.Buffer
+
+	switch reflect.TypeOf(args).Kind() {
+	case reflect.Slice:
+		for _, arg := range args {
+			switch reflect.TypeOf(arg).Kind() {
+			case reflect.String:
+				errMsgBuffer.WriteString(arg.(string)+"\n")
+			}
+		}
+	}
+
+	clientReq := slackit.ClientRequest{
+		Header: "Alert",
+		ServiceName: serviceName,
+		Summary: "Some error occurred TEST",
+		Details: errMsgBuffer.String(),
+		Status: slackit.Alert,
+	}
+
+	_ = slackitClient.Send(clientReq)
 }

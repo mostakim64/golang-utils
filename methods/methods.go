@@ -12,8 +12,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"bitbucket.org/shadowchef/utils/logger"
 )
 
 func MapToStruct(input map[string]interface{}, output interface{}) error {
@@ -70,7 +68,7 @@ func StringToIntArray(stringArray []string) []int {
 
 func RecoverPanic() {
 	if r := recover(); r != nil {
-		logger.Error(r)
+		//logger.Error(r)
 	}
 }
 
