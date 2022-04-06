@@ -1,6 +1,6 @@
 package main
-import (
 
+import (
 	"bitbucket.org/shadowchef/utils/logger"
 	"errors"
 )
@@ -10,6 +10,9 @@ func main() {
 	service := "storage"
 	_ = logger.NewSlackLogitClient(webhookUrl, service)
 	e := errors.New("new error")
-
+	logger.SetLogJsonFormatter()
 	logger.Error("Error occurred", e.Error(), nil)
+	logger.Info("Test Info ", e.Error(), nil)
+	logger.Debug("Test debug")
+
 }
