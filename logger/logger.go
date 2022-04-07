@@ -33,12 +33,6 @@ func Debug(args ...interface{}) {
 		entry := logger.WithFields(logrus.Fields{})
 		//entry.Data["file"] = fileInfo(2)
 		entry.Debug(args...)
-		slackLogReq := SlacklogRequest{
-			Message: fmt.Sprint(args...),
-			File:    fileInfo(2),
-			Level:   "Debug",
-		}
-		_ = ProcessAndSend(slackLogReq, slackit.Success)
 	}
 }
 
@@ -95,7 +89,7 @@ func Error(args ...interface{}) {
 		entry.Error(args...)
 		slackLogReq := SlacklogRequest{
 			Message: fmt.Sprint(args...),
-			File:    fileInfo(2),
+			File:    fileAddressInfo(2),
 			Level:   "error",
 		}
 		_ = ProcessAndSend(slackLogReq, slackit.Alert)
@@ -117,6 +111,12 @@ func Fatal(args ...interface{}) {
 		entry := logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = fileInfo(2)
 		entry.Fatal(args...)
+		slackLogReq := SlacklogRequest{
+			Message: fmt.Sprint(args...),
+			File:    fileAddressInfo(2),
+			Level:   "fatal",
+		}
+		_ = ProcessAndSend(slackLogReq, slackit.Alert)
 	}
 }
 
@@ -135,6 +135,12 @@ func Panic(args ...interface{}) {
 		entry := logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = fileInfo(2)
 		entry.Panic(args...)
+		slackLogReq := SlacklogRequest{
+			Message: fmt.Sprint(args...),
+			File:    fileAddressInfo(2),
+			Level:   "panic",
+		}
+		_ = ProcessAndSend(slackLogReq, slackit.Alert)
 	}
 }
 
@@ -160,6 +166,12 @@ func fileInfo(skip int) string {
 	}
 	return fmt.Sprintf("%s:%d", file, line)
 }
+
+func fileAddressInfo(skip int) string {
+	_, file, line, _ := runtime.Caller(skip)
+	return fmt.Sprintf("%s:%d", file, line)
+}
+
 
 func processLog(args ...interface{}) string {
 	var errMsgBuffer bytes.Buffer
