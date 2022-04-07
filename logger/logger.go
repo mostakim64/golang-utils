@@ -108,15 +108,16 @@ func ErrorWithFields(l interface{}, f fields) {
 // Fatal logs a message at level Fatal on the standard logger.
 func Fatal(args ...interface{}) {
 	if logger.Level >= logrus.FatalLevel {
-		entry := logger.WithFields(logrus.Fields{})
-		entry.Data["file"] = fileInfo(2)
-		entry.Fatal(args...)
 		slackLogReq := SlacklogRequest{
 			Message: fmt.Sprint(args...),
 			File:    fileAddressInfo(2),
 			Level:   "fatal",
 		}
 		_ = ProcessAndSend(slackLogReq, slackit.Alert)
+		entry := logger.WithFields(logrus.Fields{})
+		entry.Data["file"] = fileInfo(2)
+		entry.Fatal(args...)
+
 	}
 }
 
