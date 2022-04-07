@@ -132,15 +132,18 @@ func FatalWithFields(l interface{}, f fields) {
 // Panic logs a message at level Panic on the standard logger.
 func Panic(args ...interface{}) {
 	if logger.Level >= logrus.PanicLevel {
-		entry := logger.WithFields(logrus.Fields{})
-		entry.Data["file"] = fileInfo(2)
-		entry.Panic(args...)
+
 		slackLogReq := SlacklogRequest{
 			Message: fmt.Sprint(args...),
 			File:    fileAddressInfo(2),
 			Level:   "panic",
 		}
 		_ = ProcessAndSend(slackLogReq, slackit.Alert)
+
+		entry := logger.WithFields(logrus.Fields{})
+		entry.Data["file"] = fileInfo(2)
+		entry.Panic(args...)
+
 	}
 }
 
