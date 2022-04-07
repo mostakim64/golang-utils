@@ -8,7 +8,7 @@ import (
 func main() {
 	webhookUrl := "https://hooks.slack.com/services/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"
 	service := "storage"
-	_ = logger.NewSlackLogitClient(webhookUrl, service)
+	logger.SetSlackLogger(webhookUrl, service)
 	e := errors.New("new error")
 	logger.SetLogJsonFormatter()
 	logger.Error("Error occurred ", e.Error(), nil)

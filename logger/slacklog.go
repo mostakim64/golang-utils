@@ -8,11 +8,10 @@ import (
 var slackitClient *slackit.SlackitClient
 var serviceName string
 
-func NewSlackLogitClient(webhookUrl, service string) error {
+func SetSlackLogger(webhookUrl, service string) {
 	client := slackit.NewSlackitClient(webhookUrl)
 	slackitClient = &client
 	serviceName = service
-	return nil
 }
 
 func send(msg string) {
