@@ -57,12 +57,6 @@ func Info(args ...interface{}) {
 		entry := logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = fileInfo(2)
 		entry.Info(args...)
-		slackLogReq := SlacklogRequest{
-			Message: fmt.Sprint(args...),
-			File:    fileInfo(2),
-			Level:   "Info",
-		}
-		_ = ProcessAndSend(slackLogReq, slackit.Success)
 	}
 }
 
@@ -81,12 +75,6 @@ func Warn(args ...interface{}) {
 		entry := logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = fileInfo(2)
 		entry.Warn(args...)
-		slackLogReq := SlacklogRequest{
-			Message: fmt.Sprint(args...),
-			File:    fileInfo(2),
-			Level:   "warning",
-		}
-		_ = ProcessAndSend(slackLogReq, slackit.Warning)
 	}
 }
 
