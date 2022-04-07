@@ -11,8 +11,9 @@ func main() {
 	_ = logger.NewSlackLogitClient(webhookUrl, service)
 	e := errors.New("new error")
 	logger.SetLogJsonFormatter()
-	logger.Error("Error occurred", e.Error(), nil)
-	logger.Info("Test Info ", e.Error(), nil)
+	logger.Error("Error occurred ", e.Error(), nil)
+	logger.Info("Test Info ", "Test Info 2 ", nil)
 	logger.Debug("Test debug")
+	logger.Warn("Test warning")
 
 }
