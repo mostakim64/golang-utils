@@ -1,16 +1,19 @@
 package logger
 
 import (
+	"bitbucket.org/shadowchef/utils/slackit"
+	"bytes"
 	"fmt"
-	"runtime"
-
 	"github.com/sirupsen/logrus"
+	"reflect"
+	"runtime"
+	"strings"
 )
 
 var logger = logrus.New()
 
-// Fields wraps logrus.Fields, which is a map[string]interface{}
-type Fields logrus.Fields
+// fields wraps logrus.Fields, which is a map[string]interface{}
+type fields logrus.Fields
 
 func SetLogLevel(level logrus.Level) {
 	logger.Level = level
@@ -18,6 +21,10 @@ func SetLogLevel(level logrus.Level) {
 
 func SetLogFormatter(formatter logrus.Formatter) {
 	logger.Formatter = formatter
+}
+
+func SetLogJsonFormatter() {
+	logger.Formatter = &logrus.JSONFormatter{}
 }
 
 // Debug logs a message at level Debug on the standard logger.
@@ -29,8 +36,8 @@ func Debug(args ...interface{}) {
 	}
 }
 
-// Debug logs a message with fields at level Debug on the standard logger.
-func DebugWithFields(l interface{}, f Fields) {
+// DebugWithFields Debug logs a message with fields at level Debug on the standard logger.
+func DebugWithFields(l interface{}, f fields) {
 	if logger.Level >= logrus.DebugLevel {
 		entry := logger.WithFields(logrus.Fields(f))
 		//entry.Data["file"] = fileInfo(2)
@@ -47,8 +54,8 @@ func Info(args ...interface{}) {
 	}
 }
 
-// Debug logs a message with fields at level Debug on the standard logger.
-func InfoWithFields(l interface{}, f Fields) {
+// InfoWithFields Debug logs a message with fields at level Debug on the standard logger.
+func InfoWithFields(l interface{}, f fields) {
 	if logger.Level >= logrus.InfoLevel {
 		entry := logger.WithFields(logrus.Fields(f))
 		//entry.Data["file"] = fileInfo(2)
@@ -65,8 +72,8 @@ func Warn(args ...interface{}) {
 	}
 }
 
-// Debug logs a message with fields at level Debug on the standard logger.
-func WarnWithFields(l interface{}, f Fields) {
+// WarnWithFields Debug logs a message with fields at level Debug on the standard logger.
+func WarnWithFields(l interface{}, f fields) {
 	if logger.Level >= logrus.WarnLevel {
 		entry := logger.WithFields(logrus.Fields(f))
 		entry.Data["file"] = fileInfo(2)
@@ -80,11 +87,17 @@ func Error(args ...interface{}) {
 		entry := logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = fileInfo(2)
 		entry.Error(args...)
+		slackLogReq := SlacklogRequest{
+			Message: fmt.Sprint(args...),
+			File:    fileAddressInfo(2),
+			Level:   "error",
+		}
+		_ = ProcessAndSend(slackLogReq, slackit.Alert, "Error")
 	}
 }
 
-// Debug logs a message with fields at level Debug on the standard logger.
-func ErrorWithFields(l interface{}, f Fields) {
+// ErrorWithFields Debug logs a message with fields at level Debug on the standard logger.
+func ErrorWithFields(l interface{}, f fields) {
 	if logger.Level >= logrus.ErrorLevel {
 		entry := logger.WithFields(logrus.Fields(f))
 		entry.Data["file"] = fileInfo(2)
@@ -95,14 +108,21 @@ func ErrorWithFields(l interface{}, f Fields) {
 // Fatal logs a message at level Fatal on the standard logger.
 func Fatal(args ...interface{}) {
 	if logger.Level >= logrus.FatalLevel {
+		slackLogReq := SlacklogRequest{
+			Message: fmt.Sprint(args...),
+			File:    fileAddressInfo(2),
+			Level:   "fatal",
+		}
+		_ = ProcessAndSend(slackLogReq, slackit.Alert, "Fatal")
 		entry := logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = fileInfo(2)
 		entry.Fatal(args...)
+
 	}
 }
 
-// Debug logs a message with fields at level Debug on the standard logger.
-func FatalWithFields(l interface{}, f Fields) {
+// FatalWithFields Debug logs a message with fields at level Debug on the standard logger.
+func FatalWithFields(l interface{}, f fields) {
 	if logger.Level >= logrus.FatalLevel {
 		entry := logger.WithFields(logrus.Fields(f))
 		entry.Data["file"] = fileInfo(2)
@@ -113,14 +133,23 @@ func FatalWithFields(l interface{}, f Fields) {
 // Panic logs a message at level Panic on the standard logger.
 func Panic(args ...interface{}) {
 	if logger.Level >= logrus.PanicLevel {
+
+		slackLogReq := SlacklogRequest{
+			Message: fmt.Sprint(args...),
+			File:    fileAddressInfo(2),
+			Level:   "panic",
+		}
+		_ = ProcessAndSend(slackLogReq, slackit.Alert, "Panic")
+
 		entry := logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = fileInfo(2)
 		entry.Panic(args...)
+
 	}
 }
 
-// Debug logs a message with fields at level Debug on the standard logger.
-func PanicWithFields(l interface{}, f Fields) {
+// PanicWithFields Debug logs a message with fields at level Debug on the standard logger.
+func PanicWithFields(l interface{}, f fields) {
 	if logger.Level >= logrus.PanicLevel {
 		entry := logger.WithFields(logrus.Fields(f))
 		entry.Data["file"] = fileInfo(2)
@@ -133,12 +162,34 @@ func fileInfo(skip int) string {
 	if !ok {
 		file = "<???>"
 		line = 1
+	} else {
+		slash := strings.LastIndex(file, "/")
+		if slash >= 0 {
+			file = file[slash+1:]
+		}
 	}
-	//else {
-	//	slash := strings.LastIndex(file, "/")
-	//	if slash >= 0 {
-	//		file = file[slash+1:]
-	//	}
-	//}
 	return fmt.Sprintf("%s:%d", file, line)
+}
+
+func fileAddressInfo(skip int) string {
+	_, file, line, _ := runtime.Caller(skip)
+	return fmt.Sprintf("%s:%d", file, line)
+}
+
+
+func processLog(args ...interface{}) string {
+	var errMsgBuffer bytes.Buffer
+	for _, arg := range args {
+		if arg != nil {
+			switch reflect.TypeOf(arg).Kind() {
+			case reflect.String:
+				errMsgBuffer.WriteString(arg.(string) + "\n")
+			case reflect.Ptr:
+				e := arg.(error)
+				errMsgBuffer.WriteString(e.Error() + "\n")
+			}
+		}
+	}
+
+	return errMsgBuffer.String()
 }
