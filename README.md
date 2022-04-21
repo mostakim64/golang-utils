@@ -48,6 +48,11 @@ import (
 )
 
 func main() {
+	// FOR sending Error/Panic/Fatal Log to slack channel
+	webhookUrl := "webhook url"
+	service := "service name"
+	logger.SetSlackLogger(webhookUrl, service)
+	logger.Error("Error occurred ", e.Error(), nil)
 	logger.Info("put your message here...")
 }
 ```
