@@ -92,7 +92,7 @@ func Error(args ...interface{}) {
 			File:    fileAddressInfo(2),
 			Level:   "error",
 		}
-		_ = ProcessAndSend(slackLogReq, slackit.Alert)
+		_ = ProcessAndSend(slackLogReq, slackit.Alert, "Error")
 	}
 }
 
@@ -113,7 +113,7 @@ func Fatal(args ...interface{}) {
 			File:    fileAddressInfo(2),
 			Level:   "fatal",
 		}
-		_ = ProcessAndSend(slackLogReq, slackit.Alert)
+		_ = ProcessAndSend(slackLogReq, slackit.Alert, "Fatal")
 		entry := logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = fileInfo(2)
 		entry.Fatal(args...)
@@ -139,7 +139,7 @@ func Panic(args ...interface{}) {
 			File:    fileAddressInfo(2),
 			Level:   "panic",
 		}
-		_ = ProcessAndSend(slackLogReq, slackit.Alert)
+		_ = ProcessAndSend(slackLogReq, slackit.Alert, "Panic")
 
 		entry := logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = fileInfo(2)

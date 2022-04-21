@@ -26,7 +26,7 @@ func send(msg string) {
 	_ = slackitClient.Send(clientReq)
 }
 
-func ProcessAndSend(slackLogReq SlacklogRequest, status int) error{
+func ProcessAndSend(slackLogReq SlacklogRequest, status int, logType string) error{
 
 	if slackitClient != nil {
 		msg, err := json.MarshalIndent(&slackLogReq, "", "\t")
@@ -37,7 +37,7 @@ func ProcessAndSend(slackLogReq SlacklogRequest, status int) error{
 			clientReq := slackit.ClientRequest{
 				Header:      slackLogReq.Level,
 				ServiceName: serviceName,
-				Summary:     "Some error occurred TEST",
+				Summary:     logType + " Log from " + serviceName,
 				Details:     string(msg),
 				Status:      status,
 			}
