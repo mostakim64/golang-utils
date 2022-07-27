@@ -297,3 +297,11 @@ func Chunks(s string, chunkSize int) []string {
 	chunks = append(chunks, s[currentStart:])
 	return chunks
 }
+
+func GenerateKlikitStoreID(brandID, branchID int) string {
+	return "KSID-" + strconv.Itoa(brandID) + "-" + strconv.Itoa(branchID)
+}
+
+func SleepForXMintue(x int) {
+	time.Sleep(time.Duration(x) * time.Second)
+}
