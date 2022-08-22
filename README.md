@@ -57,6 +57,19 @@ func main() {
 }
 ```
 
+### Generic logger package
+```go
+package main
+
+import "bitbucket.org/shadowchef/utils/logger"
+
+func main() {
+	kLogger := logger.NewLoggerClient()
+	kLogger.Info("log some info...")
+}
+
+```
+
 ### slackit package
 ```go
 package main

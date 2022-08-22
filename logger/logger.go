@@ -12,9 +12,6 @@ import (
 
 var logger = logrus.New()
 
-// fields wraps logrus.Fields, which is a map[string]interface{}
-type fields logrus.Fields
-
 func SetLogLevel(level logrus.Level) {
 	logger.Level = level
 }
@@ -175,7 +172,6 @@ func fileAddressInfo(skip int) string {
 	_, file, line, _ := runtime.Caller(skip)
 	return fmt.Sprintf("%s:%d", file, line)
 }
-
 
 func processLog(args ...interface{}) string {
 	var errMsgBuffer bytes.Buffer
