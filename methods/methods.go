@@ -68,7 +68,7 @@ func StringToIntArray(stringArray []string) []int {
 
 func RecoverPanic() {
 	if r := recover(); r != nil {
-		//logger.Error(r)
+		// logger.Error(r)
 	}
 }
 
@@ -298,8 +298,12 @@ func Chunks(s string, chunkSize int) []string {
 	return chunks
 }
 
-func GenerateKlikitStoreID(brandID, branchID int) string {
-	return "KSID-" + strconv.Itoa(brandID) + "-" + strconv.Itoa(branchID)
+func GenerateKlikitStoreID(brandID, branchID int, isFPSingleDeviceStore bool) string {
+	if isFPSingleDeviceStore {
+		return fmt.Sprintf("KSID-%d", branchID)
+	}
+
+	return fmt.Sprintf("KSID-%d-%d", brandID, branchID)
 }
 
 func SleepForXMintue(x int) {
