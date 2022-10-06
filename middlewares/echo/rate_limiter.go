@@ -12,21 +12,15 @@ import (
 	"time"
 
 	"bitbucket.org/shadowchef/utils/logger"
-	v "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"golang.org/x/time/rate"
 )
 
-func (f *emailReqData) Validate() error {
-	return v.ValidateStruct(f,
-		v.Field(&f.Email, v.Required, is.EmailFormat),
-	)
-}
-
+// TokenIdentifier function
 type TokenIdentifier func(c echo.Context) (string, error)
 
+// ByEmailToken allows email as token bucket identifier
 func ByEmailToken(c echo.Context) (string, error) {
 	bodyBytes, err := ioutil.ReadAll(c.Request().Body)
 	if err != nil {
@@ -48,10 +42,12 @@ func ByEmailToken(c echo.Context) (string, error) {
 	return body.Email, nil
 }
 
+// ByRemoteIPToken allows RemoteIP as token bucket identifier
 func ByRemoteIPToken(c echo.Context) (string, error) {
 	return c.RealIP(), nil
 }
 
+// RateLimiter, a echo middleware to rate limiting an endpoint
 func RateLimiter(tokenIdentifier TokenIdentifier, unit string, ratePerUnit int) echo.MiddlewareFunc {
 	rateLimiter := configureRateLimiterStore(unit, ratePerUnit)
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
