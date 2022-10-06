@@ -48,6 +48,27 @@ func ByRemoteIPToken(c echo.Context) (string, error) {
 }
 
 // RateLimiter, a echo middleware to rate limiting an endpoint
+//
+// Example of applying rate limiter middleware in a route
+//
+// import (
+//
+//   m "bitbucket.org/shadowchef/utils/middlewares/echo"
+//
+//   "github.com/labstack/echo/v4"
+//
+// )
+//
+// e := echo.New()
+//
+// g := e.Group("/v1")
+//
+// unit := "MINUTE"
+//
+// ratePerUnit := 1
+//
+// g.POST("/password/forgot", c.ForgotPassword, m.RateLimiter(m.ByEmailToken, unit, ratePerUnit))
+//
 func RateLimiter(tokenIdentifier TokenIdentifier, unit string, ratePerUnit int) echo.MiddlewareFunc {
 	rateLimiter := configureRateLimiterStore(unit, ratePerUnit)
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
