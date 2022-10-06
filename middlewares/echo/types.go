@@ -12,7 +12,7 @@ const (
 )
 
 type emailReqData struct {
-	Email string `json:"email" validate:"required,email"`
+	Email string `json:"email"`
 }
 
 func (f *emailReqData) Validate() error {
