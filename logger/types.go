@@ -1,6 +1,8 @@
 package logger
 
-import "github.com/sirupsen/logrus"
+import (
+	"github.com/sirupsen/logrus"
+)
 
 // fields wraps logrus.Fields, which is a map[string]interface{}
 type fields logrus.Fields
