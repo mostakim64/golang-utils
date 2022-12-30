@@ -1,8 +1,6 @@
 package methods
 
 import (
-	"bitbucket.org/shadowchef/utils/logger"
-	"bitbucket.org/shadowchef/utils/slackit"
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
@@ -10,7 +8,6 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
-	"net/http"
 	"reflect"
 	"strconv"
 	"strings"
@@ -311,32 +308,4 @@ func GenerateKlikitStoreID(brandID, branchID int, isFPSingleDeviceStore bool) st
 
 func SleepForXMintue(x int) {
 	time.Sleep(time.Duration(x) * time.Second)
-}
-
-func HandleApiError(req *http.Request, res *http.Response, body interface{}, whichApi string) (*slackit.ApiError, error) {
-	defer func() {
-		_ = res.Body.Close()
-	}()
-
-	requestBody := body
-
-	responseBody := &json.RawMessage{}
-	if res.Body != nil {
-		if err := json.NewDecoder(res.Body).Decode(responseBody); err != nil {
-			logger.Error(err)
-			return nil, fmt.Errorf("failed to decode %s response", whichApi)
-		}
-	}
-
-	payload := &slackit.ApiError{
-		Api: whichApi,
-		Url: req.URL.String(),
-		ApiDetails: slackit.ApiResponse{
-			Status:       res.StatusCode,
-			RequestBody:  requestBody,
-			ResponseBody: responseBody,
-		},
-	}
-
-	return payload, nil
 }

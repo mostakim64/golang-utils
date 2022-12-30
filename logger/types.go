@@ -1,6 +1,9 @@
 package logger
 
 import (
+	"net/http"
+
+	"bitbucket.org/shadowchef/utils/slackit"
 	"github.com/sirupsen/logrus"
 )
 
@@ -13,6 +16,20 @@ type SlacklogRequest struct {
 	Level   string `json:"level"`
 }
 
+type SlacklogRequestWithRes struct {
+	Message    string           `json:"message"`
+	File       string           `json:"file"`
+	Level      string           `json:"level"`
+	ApiDetails slackit.ApiError `json:"api_details"`
+}
+
 type KlikitLogger struct {
 	client *logrus.Logger
+}
+
+type ParsedReqRes struct {
+	Req     *http.Request
+	ReqBody interface{}
+	Res     *http.Response
+	ResBody interface{}
 }

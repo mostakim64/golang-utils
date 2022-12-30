@@ -1,7 +1,6 @@
 package slackit
 
 import (
-	"encoding/json"
 	v "github.com/go-ozzo/ozzo-validation/v4"
 )
 
@@ -25,13 +24,14 @@ func (req *ClientRequest) Validate() error {
 }
 
 type ApiError struct {
-	Api        string      `json:"api"`
-	Url        string      `json:"url"`
-	ApiDetails ApiResponse `json:"api_details"`
+	Api  string `json:"api"`
+	Url  string `json:"url"`
+	Data Data   `json:"data"`
 }
 
-type ApiResponse struct {
-	Status       int              `json:"status"`
-	RequestBody  interface{}      `json:"request_body"`
-	ResponseBody *json.RawMessage `json:"response_body"`
+type Data struct {
+	Status       int         `json:"status"`
+	Headers      interface{} `json:"headers"`
+	RequestBody  interface{} `json:"request_body"`
+	ResponseBody interface{} `json:"response_body"`
 }
