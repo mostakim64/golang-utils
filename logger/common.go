@@ -1,13 +1,14 @@
 package logger
 
 import (
-	"bitbucket.org/shadowchef/utils/slackit"
 	"bytes"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"reflect"
 	"runtime"
 	"strings"
+
+	"bitbucket.org/shadowchef/utils/slackit"
+	"github.com/sirupsen/logrus"
 )
 
 func NewLoggerClient() *KlikitLogger {
@@ -83,7 +84,18 @@ func (r *KlikitLogger) WarnWithFields(l interface{}, f map[string]interface{}) {
 }
 
 // Error logs a message at level Error on the KlikitLogger.
+//
+// if 1 item in args then there will be no metadata
+//
+// if multiple items in args then 1st item will be treated as metadata and rest items will go for args
 func (r *KlikitLogger) Error(args ...interface{}) {
+	var metaData interface{}
+
+	if len(args) > 1 {
+		metaData = args[0]
+		args = args[1:]
+	}
+
 	if r.client.Level >= logrus.ErrorLevel {
 		entry := r.client.WithFields(logrus.Fields{})
 		entry.Data["file"] = fileInfo(2)
@@ -94,7 +106,39 @@ func (r *KlikitLogger) Error(args ...interface{}) {
 			File:    fileAddressInfo(2),
 			Level:   "error",
 		}
-		_ = ProcessAndSend(slackLogReq, slackit.Alert, "Error")
+		if err := ProcessAndSendWithMeta(slackLogReq, metaData, slackit.Alert, "Error"); err != nil {
+			r.Warn(err)
+		}
+	}
+}
+
+// Error logs a message at level Error on the KlikitLogger. with res data and metaData
+func (r *KlikitLogger) ApiError(rs RequestResponseMap, metaData interface{}, args ...interface{}) {
+	if r.client.Level >= logrus.ErrorLevel {
+		entry := logger.WithFields(logrus.Fields{})
+		entry.Data["file"] = fileInfo(2)
+		entry.Error(args...)
+		whichApi := args[0].(string)
+
+		slackLogReq := SlacklogRequestWithApiError{
+			Message: fmt.Sprint(args...) + " Failed",
+			File:    fileAddressInfo(2),
+			Level:   "error",
+			ApiDetails: slackit.ApiError{
+				Api: whichApi,
+				Url: rs.Req.URL.String(),
+				Data: slackit.Data{
+					Status:       rs.Res.StatusCode,
+					Headers:      rs.Req.Header,
+					RequestBody:  rs.ReqBody,
+					ResponseBody: rs.ResBody,
+				},
+			},
+		}
+
+		if err := ProcessAndSendWithApiError(slackLogReq, metaData, slackit.Alert, "Error"); err != nil {
+			r.Warn(err)
+		}
 	}
 }
 
