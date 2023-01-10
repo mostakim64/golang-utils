@@ -108,14 +108,14 @@ func Error(args ...interface{}) {
 }
 
 // Error logs a message at level Error on the standard logger with request, response and metadata
-func ErrorWithResAndMeta(rs ParsedReqRes, metaData interface{}, args ...interface{}) {
+func ApiError(rs RequestResponseMap, metaData interface{}, args ...interface{}) {
 	if logger.Level >= logrus.ErrorLevel {
 		entry := logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = fileInfo(2)
 		entry.Error(args...)
 		whichApi := args[0].(string)
 
-		slackLogReq := SlacklogRequestWithRes{
+		slackLogReq := SlacklogRequestWithApiError{
 			Message: fmt.Sprint(args...) + " Failed",
 			File:    fileAddressInfo(2),
 			Level:   "error",
@@ -131,7 +131,7 @@ func ErrorWithResAndMeta(rs ParsedReqRes, metaData interface{}, args ...interfac
 			},
 		}
 
-		if err := ProcessAndSendWitResAndMeta(slackLogReq, metaData, slackit.Alert, "Error"); err != nil {
+		if err := ProcessAndSendWithApiError(slackLogReq, metaData, slackit.Alert, "Error"); err != nil {
 			Warn(err)
 		}
 

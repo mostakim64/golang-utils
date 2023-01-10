@@ -85,7 +85,7 @@ func ProcessAndSendWithMeta(slackLogReq SlacklogRequest, metaData interface{}, s
 	return nil
 }
 
-func ProcessAndSendWitResAndMeta(slackLogReq SlacklogRequestWithRes, metaData interface{}, status int, logType string) error {
+func ProcessAndSendWithApiError(slackLogReq SlacklogRequestWithApiError, metaData interface{}, status int, logType string) error {
 
 	if slackitClient != nil {
 

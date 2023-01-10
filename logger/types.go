@@ -16,7 +16,7 @@ type SlacklogRequest struct {
 	Level   string `json:"level"`
 }
 
-type SlacklogRequestWithRes struct {
+type SlacklogRequestWithApiError struct {
 	Message    string           `json:"message"`
 	File       string           `json:"file"`
 	Level      string           `json:"level"`
@@ -27,7 +27,7 @@ type KlikitLogger struct {
 	client *logrus.Logger
 }
 
-type ParsedReqRes struct {
+type RequestResponseMap struct {
 	Req     *http.Request
 	ReqBody interface{}
 	Res     *http.Response
