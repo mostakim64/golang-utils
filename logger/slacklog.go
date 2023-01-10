@@ -1,8 +1,10 @@
 package logger
 
 import (
-	"bitbucket.org/shadowchef/utils/slackit"
 	"encoding/json"
+	"fmt"
+
+	"bitbucket.org/shadowchef/utils/slackit"
 )
 
 var slackitClient *slackit.SlackitClient
@@ -26,7 +28,7 @@ func send(msg string) {
 	_ = slackitClient.Send(clientReq)
 }
 
-func ProcessAndSend(slackLogReq SlacklogRequest, status int, logType string) error{
+func ProcessAndSend(slackLogReq SlacklogRequest, status int, logType string) error {
 
 	if slackitClient != nil {
 		msg, err := json.MarshalIndent(&slackLogReq, "", "\t")
@@ -43,7 +45,78 @@ func ProcessAndSend(slackLogReq SlacklogRequest, status int, logType string) err
 			}
 			err = slackitClient.Send(clientReq)
 			if err != nil {
-				return err
+				return fmt.Errorf("Failed while sending to slack webhook [%v]", err)
+			}
+		}
+	}
+
+	return nil
+}
+
+func ProcessAndSendWithMeta(slackLogReq SlacklogRequest, metaData interface{}, status int, logType string) error {
+
+	if slackitClient != nil {
+
+		metaJson, err := json.MarshalIndent(metaData, "", "  ")
+		if err != nil {
+			return err
+		}
+
+		msg, err := json.MarshalIndent(&slackLogReq, "", "\t")
+		if err != nil {
+			return err
+		}
+		if msg != nil {
+			clientReq := slackit.ClientRequest{
+				Header:      slackLogReq.Level,
+				ServiceName: serviceName,
+				Summary:     logType + " Log from " + serviceName,
+				Metadata:    string(metaJson),
+				Details:     string(msg),
+				Status:      status,
+			}
+			err = slackitClient.Send(clientReq)
+			if err != nil {
+				return fmt.Errorf("Failed while sending to slack webhook [%v]", err)
+			}
+		}
+	}
+
+	return nil
+}
+
+func ProcessAndSendWithApiError(slackLogReq SlacklogRequestWithApiError, metaData interface{}, status int, logType string) error {
+
+	if slackitClient != nil {
+
+		metaJson, err := json.MarshalIndent(metaData, "", "  ")
+		if err != nil {
+			return err
+		}
+
+		msg, err := json.MarshalIndent(&slackLogReq, "", "\t")
+		if err != nil {
+			return err
+		}
+
+		var mentions []string
+		if status == slackit.Alert {
+			mentions = append(mentions, "@here")
+		}
+
+		if msg != nil {
+			clientReq := slackit.ClientRequest{
+				Header:      "API " + slackLogReq.Level,
+				ServiceName: serviceName,
+				Summary:     logType + " Log from " + serviceName,
+				Metadata:    string(metaJson),
+				Details:     string(msg),
+				Status:      status,
+				Mentions:    mentions,
+			}
+			err = slackitClient.Send(clientReq)
+			if err != nil {
+				return fmt.Errorf("Failed while sending to slack webhook [%v]", err)
 			}
 		}
 	}

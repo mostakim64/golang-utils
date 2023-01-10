@@ -1,13 +1,14 @@
 package logger
 
 import (
-	"bitbucket.org/shadowchef/utils/slackit"
 	"bytes"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"reflect"
 	"runtime"
 	"strings"
+
+	"bitbucket.org/shadowchef/utils/slackit"
+	"github.com/sirupsen/logrus"
 )
 
 var logger = logrus.New()
@@ -79,7 +80,18 @@ func WarnWithFields(l interface{}, f fields) {
 }
 
 // Error logs a message at level Error on the standard logger.
+//
+// if 1 item in args then there will be no metadata
+//
+// if multiple items in args then 1st item will be treated as metadata and rest items will go for args
 func Error(args ...interface{}) {
+	var metaData interface{}
+
+	if len(args) > 1 {
+		metaData = args[0]
+		args = args[1:]
+	}
+
 	if logger.Level >= logrus.ErrorLevel {
 		entry := logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = fileInfo(2)
@@ -89,7 +101,40 @@ func Error(args ...interface{}) {
 			File:    fileAddressInfo(2),
 			Level:   "error",
 		}
-		_ = ProcessAndSend(slackLogReq, slackit.Alert, "Error")
+		if err := ProcessAndSendWithMeta(slackLogReq, metaData, slackit.Alert, "Error"); err != nil {
+			Warn(err)
+		}
+	}
+}
+
+// Error logs a message at level Error on the standard logger with request, response and metadata
+func ApiError(rs RequestResponseMap, metaData interface{}, args ...interface{}) {
+	if logger.Level >= logrus.ErrorLevel {
+		entry := logger.WithFields(logrus.Fields{})
+		entry.Data["file"] = fileInfo(2)
+		entry.Error(args...)
+		whichApi := args[0].(string)
+
+		slackLogReq := SlacklogRequestWithApiError{
+			Message: fmt.Sprint(args...) + " Failed",
+			File:    fileAddressInfo(2),
+			Level:   "error",
+			ApiDetails: slackit.ApiError{
+				Api: whichApi,
+				Url: rs.Req.URL.String(),
+				Data: slackit.Data{
+					Status:       rs.Res.StatusCode,
+					Headers:      rs.Req.Header,
+					RequestBody:  rs.ReqBody,
+					ResponseBody: rs.ResBody,
+				},
+			},
+		}
+
+		if err := ProcessAndSendWithApiError(slackLogReq, metaData, slackit.Alert, "Error"); err != nil {
+			Warn(err)
+		}
+
 	}
 }
 
