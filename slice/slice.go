@@ -7,7 +7,7 @@ type Function[T, V any] func(item T) V
 
 type Predicate[T comparable] func(item T) bool
 
-type Consumer[T any] func(item *T)
+type Consumer[T any] func(item T)
 
 type Accumulator[T, V any] func(acc *V, item *T) V
 
@@ -55,9 +55,9 @@ func Filter[T comparable](arr []T, pred Predicate[T]) []T {
 	return narr
 }
 
-func ForEach[T any](arr *[]T, cons Consumer[T]) {
-	for _, item := range *arr {
-		cons(&item)
+func ForEach[T any](arr []T, cons Consumer[T]) {
+	for _, item := range arr {
+		cons(item)
 	}
 }
 
