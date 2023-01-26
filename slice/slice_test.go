@@ -12,18 +12,20 @@ func Test_Map_type_conversion(t *testing.T) {
 	src := []int{1, 2, 3}
 	t.Run("Convert int to string of each element", func(t *testing.T) {
 		exp := []string{"1", "2", "3"}
-		f := func(item *int) string { return strconv.Itoa(*item) }
-		act := Map(&src, f)
-		assert.Equal(t, &exp, act)
-		assert.NotSame(t, &exp, act)
+		f := func(item int) string { return strconv.Itoa(item) }
+		act := Map(src, f)
+
+		assert.Equal(t, exp, act)
+		assert.NotSame(t, exp, act)
 	})
 
 	t.Run("Convert int to float64 of each element", func(t *testing.T) {
 		exp := []float64{float64(1), float64(2), float64(3)}
-		f := func(item *int) float64 { return float64(*item) }
-		act := Map(&src, f)
-		assert.Equal(t, &exp, act)
-		assert.NotSame(t, &exp, act)
+		f := func(item int) float64 { return float64(item) }
+		act := Map(src, f)
+
+		assert.Equal(t, exp, act)
+		assert.NotSame(t, exp, act)
 	})
 }
 
@@ -34,11 +36,11 @@ type (
 	}
 )
 
-func getName(p *person) string {
+func getName(p person) string {
 	return p.name
 }
 
-func getAge(p *person) int {
+func getAge(p person) int {
 	return p.age
 }
 
@@ -71,14 +73,14 @@ var (
 
 func Test_Map_extract_from_struct(t *testing.T) {
 	t.Run("extract field value", func(t *testing.T) {
-		names := Map(&persons, func(p *person) string { return p.name })
-		assert.Equal(t, expectedNames, *names)
+		names := Map(persons, func(p person) string { return p.name })
+		assert.Equal(t, expectedNames, names)
 
-		names1 := Map(&persons, getName)
-		assert.Equal(t, expectedNames, *names1)
+		names1 := Map(persons, getName)
+		assert.Equal(t, expectedNames, names1)
 
-		ages := Map(&persons, getAge)
-		assert.Equal(t, expectedAges, *ages)
+		ages := Map(persons, getAge)
+		assert.Equal(t, expectedAges, ages)
 	})
 
 	t.Run("pointer", func(t *testing.T) {
@@ -102,25 +104,24 @@ func Test_Map_extract_from_struct(t *testing.T) {
 			{students: &sd2},
 		}
 
-		count := func(d *dept) int { return len(*d.students) }
-		counts := Map(&d, count)
-		assert.Equal(t, []int{3, 4}, *counts)
+		count := func(d dept) int { return len(*d.students) }
+		counts := Map(d, count)
+		assert.Equal(t, []int{3, 4}, counts)
 
-		f2 := func(d *dept) dept {
+		f2 := func(d dept) dept {
 			d.count = len(*d.students)
-			return *d
+			return d
 		}
 		exp1 := []dept{
 			{students: &sd1, count: 3},
 			{students: &sd2, count: 4},
 		}
-		act := Map(&d, f2)
-		assert.Equal(t, exp1, *act)
-		assert.Equal(t, d[0].students, (*act)[0].students)
+		act := Map(d, f2)
+		assert.Equal(t, exp1, act)
+		assert.Equal(t, d[0].students, act[0].students)
 		// element remains the same
-		assert.Same(t, d[0].students, (*act)[0].students)
-		assert.Exactly(t, d[0].students, (*act)[0].students)
-
+		assert.Same(t, d[0].students, act[0].students)
+		assert.Exactly(t, d[0].students, act[0].students)
 	})
 }
 
@@ -205,8 +206,10 @@ func TestChaining(t *testing.T) {
 			}
 			return *acc
 		}
-
-		maxAge := Reduce(Map(Filter(&persons, search("Mr.")), getAge), math.MinInt, findMax)
+		// todo refactor
+		fil := Filter(&persons, search("Mr."))
+		mp := Map(*fil, getAge)
+		maxAge := Reduce(&mp, math.MinInt, findMax)
 		assert.Equal(t, 33, *maxAge)
 	})
 }
@@ -232,8 +235,9 @@ func TestFlatMap(t *testing.T) {
 		src := [][]int{{1, 2}, {4, 5, 6, 7}, {-1}, {-2, -3}}
 		exp := []int{1, 4, 16, 25, 36, 49, 1, 4, 9}
 
-		square := func(i *int) int { return *i * *i }
+		square := func(i int) int { return i * i }
 
+		//  todo refactor
 		fm := FlatMap(&src, square)
 		assert.Equal(t, exp, *fm)
 	})

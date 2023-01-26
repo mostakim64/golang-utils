@@ -1,9 +1,9 @@
 package slice
 
-// Function takes a reference element of T type and returns the output of V type
+// Function takes an element of T type and returns the output of V type
 // Example: 1 => Function[int, string] => "1" takes int converts it to string; here T int and V string
-// Code Example: func(i *int) string { return strconv.Itoa(i) }
-type Function[T, V any] func(item *T) V
+// Code Example: func(i int) string { return strconv.Itoa(i) }
+type Function[T, V any] func(item T) V
 
 type Predicate[T comparable] func(item *T) bool
 
@@ -11,26 +11,26 @@ type Consumer[T any] func(item *T)
 
 type Accumulator[T, V any] func(acc *V, item *T) V
 
-// Map takes the reference of slice of T type and a mapper Function[T, V] and returns the reference of converted new slice.
-// Function[T, V]; T is the source slice element type and V determines the type of output referenced slice type.
+// Map takes the slice of T type and a mapper Function[T, V] and returns new slice of type V
+// Function[T, V]; T is the source slice element type and V determines the type of output slice type.
 // Output slice is completely different.
 // If the underneath element of source slice is reference value, it may or may not be same (pointing to the same reference/address) depending on the mapper function.
 //
 // Example:
 // 		src := []int{1, 2, 3}
-// 		mapper := func(item *int) string { return strconv.Itoa(*item) }
-//  	out := Map(&src, mapper)
+// 		mapper := func(item int) string { return strconv.Itoa(item) }
+//  	out := Map(src, mapper)
 //  	-----------------------
 //  	Output:
-// 			&[]string{"1", "2", "3"}
+// 			[]string{"1", "2", "3"}
 // For more examples, see  	-Test_Map_type_conversion
 //							-Test_Map_extract_from_struct
-func Map[T, V any](arr *[]T, mapper Function[T, V]) *[]V {
+func Map[T, V any](arr []T, mapper Function[T, V]) []V {
 	var narr []V
-	for _, item := range *arr {
-		narr = append(narr, mapper(&item))
+	for _, item := range arr {
+		narr = append(narr, mapper(item))
 	}
-	return &narr
+	return narr
 }
 
 // Filter takes the reference of slice of T type and a Predicate function.
@@ -98,7 +98,10 @@ func FlatMap[T, V any](arr *[][]T, mapper Function[T, V]) *[]V {
 	acc := func(acc *[]T, i *[]T) []T {
 		return append(*acc, *i...)
 	}
-	return Map(Reduce(arr, []T{}, acc), mapper)
+	// todo refactor
+	red := Reduce(arr, []T{}, acc)
+	out := Map(*red, mapper)
+	return &out
 }
 
 // Find finds the first element based on predicate condition and returns the reference of the element, if not found, returns nil
