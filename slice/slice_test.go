@@ -240,13 +240,13 @@ func TestFind(t *testing.T) {
 		src := []int{1, 4, 16, 25, 36, 49, 1, 4, 9}
 		is49 := func(i int) bool { return i == 49 }
 
-		act := Find(&src, is49)
+		act := Find(src, is49)
 		assert.Equal(t, 49, *act)
 	})
 
 	t.Run("Find from structs", func(t *testing.T) {
 		greaterThan30 := func(p person) bool { return p.age > 30 }
-		act := Find(&persons, greaterThan30)
+		act := Find(persons, greaterThan30)
 
 		assert.Equal(t, persons[7], *act)
 		assert.Exactly(t, persons[7], *act)
@@ -254,7 +254,7 @@ func TestFind(t *testing.T) {
 
 	t.Run("Find from structs, nil if not found", func(t *testing.T) {
 		greaterThan50 := func(p person) bool { return p.age > 50 }
-		act := Find(&persons, greaterThan50)
+		act := Find(persons, greaterThan50)
 		assert.Nil(t, act)
 	})
 }

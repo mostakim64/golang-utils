@@ -102,10 +102,10 @@ func FlatMap[T, V any](arr [][]T, mapper Function[T, V]) []V {
 }
 
 // Find finds the first element based on predicate condition and returns the reference of the element, if not found, returns nil
-func Find[T comparable](arr *[]T, pred Predicate[T]) *T {
-	for i := 0; i < len(*arr); i++ {
-		if pred((*arr)[i]) {
-			return &(*arr)[i]
+func Find[T comparable](arr []T, pred Predicate[T]) *T {
+	for i := 0; i < len(arr); i++ {
+		if pred(arr[i]) {
+			return &arr[i]
 		}
 	}
 	return nil
