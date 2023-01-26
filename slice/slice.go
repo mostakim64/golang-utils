@@ -112,8 +112,8 @@ func Find[T comparable](arr []T, pred Predicate[T]) *T {
 }
 
 // FindIndex finds the first element's index based on predicate condition and returns the reference of the element, if not found, returns -1
-func FindIndex[T comparable](arr *[]T, pred Predicate[T]) int {
-	for i, item := range *arr {
+func FindIndex[T comparable](arr []T, pred Predicate[T]) int {
+	for i, item := range arr {
 		if pred(item) {
 			return i
 		}

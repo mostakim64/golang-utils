@@ -264,17 +264,17 @@ func TestFindIndex(t *testing.T) {
 		src := []int{1, 4, 16, 25, 36, 49, 1, 4, 9}
 		is49 := func(i int) bool { return i == 49 }
 
-		assert.Equal(t, 5, FindIndex(&src, is49))
+		assert.Equal(t, 5, FindIndex(src, is49))
 	})
 
 	t.Run("Find index from structs", func(t *testing.T) {
 		greaterThan30 := func(p person) bool { return p.age > 30 }
-		assert.Equal(t, 7, FindIndex(&persons, greaterThan30))
+		assert.Equal(t, 7, FindIndex(persons, greaterThan30))
 	})
 
 	t.Run("Find index from structs, -1 if not found", func(t *testing.T) {
 		greaterThan50 := func(p person) bool { return p.age > 50 }
-		assert.Equal(t, -1, FindIndex(&persons, greaterThan50))
+		assert.Equal(t, -1, FindIndex(persons, greaterThan50))
 	})
 }
 
