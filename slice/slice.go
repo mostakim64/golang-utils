@@ -123,8 +123,8 @@ func FindIndex[T comparable](arr []T, pred Predicate[T]) int {
 
 // Some takes a reference of slice and a Predicate function
 // Some returns true if any element of the source slice satisfies the condition of the Predicate, else returns false
-func Some[T comparable](arr *[]T, pred Predicate[T]) bool {
-	for _, item := range *arr {
+func Some[T comparable](arr []T, pred Predicate[T]) bool {
+	for _, item := range arr {
 		if pred(item) {
 			return true
 		}
@@ -134,8 +134,8 @@ func Some[T comparable](arr *[]T, pred Predicate[T]) bool {
 
 // Every takes a reference of slice and a Predicate function.
 // it returns true if all elements of the source slice satisfy the condition of the Predicate, if any element fails to satisfy, it returns false.
-func Every[T comparable](arr *[]T, pred Predicate[T]) bool {
-	for _, item := range *arr {
+func Every[T comparable](arr []T, pred Predicate[T]) bool {
+	for _, item := range arr {
 		if !pred(item) {
 			return false
 		}

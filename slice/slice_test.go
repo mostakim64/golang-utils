@@ -285,8 +285,8 @@ func TestSome(t *testing.T) {
 				return nameStarWith(&p, prefix)
 			}
 		}
-		assert.True(t, Some(&persons, search("dr. ")))
-		assert.False(t, Some(&persons, search("drssss. ")))
+		assert.True(t, Some(persons, search("dr. ")))
+		assert.False(t, Some(persons, search("drssss. ")))
 	})
 }
 
@@ -297,8 +297,8 @@ func TestEvery(t *testing.T) {
 				return p.age > age
 			}
 		}
-		assert.True(t, Every(&persons, greaterThanAge(-1)))
-		assert.False(t, Every(&persons, greaterThanAge(100)))
+		assert.True(t, Every(persons, greaterThanAge(-1)))
+		assert.False(t, Every(persons, greaterThanAge(100)))
 
 	})
 
