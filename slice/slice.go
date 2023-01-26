@@ -81,16 +81,15 @@ func Reduce[T, V any](arr []T, v V, acc Accumulator[T, V]) V {
 	return v
 }
 
-// Flat creates a new slice by flattening first nested child slice and returns the new slice's reference.
+// Flat creates a new slice by flattening first nested child slice and returns the new slice.
 // Example:
 // [][]int{{1, 2}, {4, 5, 6, 7}, {-1}, {-2, -3}} -> Flat() -> []int{1, 2, 4, 5, 6, 7, -1, -2, -3}
 // [][][]int{{{1, 2}, {4, 5, 6, 7}}, {{-1}, {-2, -3}}} -> Flat() -> [][]int{{1, 2}, {4, 5, 6, 7}, {-1}, {-2, -3}}
-func Flat[T any](arr *[][]T) *[]T {
+func Flat[T any](arr [][]T) []T {
 	acc := func(acc []T, item []T) []T {
 		return append(acc, item...)
 	}
-	out := Reduce(*arr, []T{}, acc)
-	return &out
+	return Reduce(arr, []T{}, acc)
 }
 
 // FlatMap flats the slice and maps the data using mapper Function.

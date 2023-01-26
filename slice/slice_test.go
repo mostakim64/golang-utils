@@ -214,14 +214,14 @@ func TestFlat(t *testing.T) {
 		src1 := [][]int{{1, 2}, {4, 5, 6, 7}, {-1}, {-2, -3}}
 		exp1 := []int{1, 2, 4, 5, 6, 7, -1, -2, -3}
 
-		flatted1 := Flat(&src1)
-		assert.Equal(t, &exp1, flatted1)
+		flatted1 := Flat(src1)
+		assert.Equal(t, exp1, flatted1)
 
 		src2 := [][][]int{{{1, 2}, {4, 5, 6, 7}}, {{-1}, {-2, -3}}}
 		exp2 := [][]int{{1, 2}, {4, 5, 6, 7}, {-1}, {-2, -3}}
 
-		flatted2 := Flat(&src2)
-		assert.Equal(t, exp2, *flatted2)
+		flatted2 := Flat(src2)
+		assert.Equal(t, exp2, flatted2)
 	})
 }
 
