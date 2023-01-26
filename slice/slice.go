@@ -9,7 +9,7 @@ type Predicate[T comparable] func(item T) bool
 
 type Consumer[T any] func(item T)
 
-type Accumulator[T, V any] func(acc *V, item *T) V
+type Accumulator[T, V any] func(acc V, item T) V
 
 // Map takes the slice of T type and a mapper Function[T, V] and returns new slice of type V
 // Function[T, V]; T is the source slice element type and V determines the type of output slice type.
@@ -61,24 +61,24 @@ func ForEach[T any](arr []T, cons Consumer[T]) {
 	}
 }
 
-// Reduce takes the reference of slice, an initial value and an Accumulator function and returns a reference of combined single value of type V.
+// Reduce takes the slice, an initial value and an Accumulator function and returns a combined single value of type V.
 // Combines the elements of the source slice into a single value of different type using the Accumulator function where base or initial value is v of type V.
 // Example:
 //		Calculate total sum
 // 		src := []int{1, 2, 3}
-//		acc := func(acc *int, i *int) int { // total sum accumulator
-//			s := *acc + *i
+//		acc := func(acc int, i int) int { // total sum accumulator
+//			s := acc + i
 //			return s
 //		}
-//		sum := Reduce(&src, 0, acc)
+//		sum := Reduce(src, 0, acc)
 // 		-------------------------
 //		Output:
 //			6
-func Reduce[T, V any](arr *[]T, v V, acc Accumulator[T, V]) *V {
-	for _, item := range *arr {
-		v = acc(&v, &item)
+func Reduce[T, V any](arr []T, v V, acc Accumulator[T, V]) V {
+	for _, item := range arr {
+		v = acc(v, item)
 	}
-	return &v
+	return v
 }
 
 // Flat creates a new slice by flattening first nested child slice and returns the new slice's reference.
@@ -86,21 +86,22 @@ func Reduce[T, V any](arr *[]T, v V, acc Accumulator[T, V]) *V {
 // [][]int{{1, 2}, {4, 5, 6, 7}, {-1}, {-2, -3}} -> Flat() -> []int{1, 2, 4, 5, 6, 7, -1, -2, -3}
 // [][][]int{{{1, 2}, {4, 5, 6, 7}}, {{-1}, {-2, -3}}} -> Flat() -> [][]int{{1, 2}, {4, 5, 6, 7}, {-1}, {-2, -3}}
 func Flat[T any](arr *[][]T) *[]T {
-	acc := func(acc *[]T, item *[]T) []T {
-		return append(*acc, *item...)
+	acc := func(acc []T, item []T) []T {
+		return append(acc, item...)
 	}
-	return Reduce(arr, []T{}, acc)
+	out := Reduce(*arr, []T{}, acc)
+	return &out
 }
 
 // FlatMap flats the slice and maps the data using mapper Function.
 // It's a chain call of Reduce (flat) and Map.
 func FlatMap[T, V any](arr *[][]T, mapper Function[T, V]) *[]V {
-	acc := func(acc *[]T, i *[]T) []T {
-		return append(*acc, *i...)
+	acc := func(acc []T, i []T) []T {
+		return append(acc, i...)
 	}
 	// todo refactor
-	red := Reduce(arr, []T{}, acc)
-	out := Map(*red, mapper)
+	red := Reduce(*arr, []T{}, acc)
+	out := Map(red, mapper)
 	return &out
 }
 

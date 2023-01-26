@@ -150,45 +150,44 @@ func TestFilter(t *testing.T) {
 func TestReduce(t *testing.T) {
 	t.Run("cumulative sum", func(t *testing.T) {
 		src := []int{1, 2, 3}
-		acc := func(acc *int, i *int) int {
-			s := *acc + *i
+		acc := func(acc int, i int) int {
+			s := acc + i
 			return s
 		}
-		sum := Reduce(&src, 0, acc)
-		assert.Equal(t, 6, *sum)
+		sum := Reduce(src, 0, acc)
+		assert.Equal(t, 6, sum)
 	})
 
 	t.Run("find max", func(t *testing.T) {
 		src := []int{1, 2, 3}
-		acc := func(acc *int, i *int) int {
-			if *i > *acc {
-				return *i
+		acc := func(acc int, i int) int {
+			if i > acc {
+				return i
 			}
-			return *acc
+			return acc
 		}
-		max := Reduce(&src, math.MinInt, acc)
-		assert.Equal(t, 3, *max)
+		max := Reduce(src, math.MinInt, acc)
+		assert.Equal(t, 3, max)
 	})
 
 	t.Run("flat array", func(t *testing.T) {
 		src := [][]int{{1, 2}, {4, 5, 6, 7}, {-1}, {-2, -3}}
-		ac1 := func(acc *[]int, i *[]int) []int {
-			return append(*acc, *i...)
+		ac1 := func(acc []int, i []int) []int {
+			return append(acc, i...)
 		}
 		exp := []int{1, 2, 4, 5, 6, 7, -1, -2, -3}
-		assert.Equal(t, &exp, Reduce(&src, []int{}, ac1))
+		assert.Equal(t, exp, Reduce(src, []int{}, ac1))
 	})
 
 	t.Run("extract field -> cumulative sum", func(t *testing.T) {
-		extractAge := func(acc *[]int, p *person) []int {
-			return append(*acc, p.age)
+		extractAge := func(acc []int, p person) []int {
+			return append(acc, p.age)
 		}
-		cumSum := func(acc *int, a *int) int {
-			s := *acc + *a
+		cumSum := func(acc int, a int) int {
+			s := acc + a
 			return s
 		}
-		cumulativeAge := Reduce(Reduce(&persons, []int{}, extractAge), 0, cumSum)
-		assert.Equal(t, 143, *cumulativeAge)
+		assert.Equal(t, 143, Reduce(Reduce(persons, []int{}, extractAge), 0, cumSum))
 	})
 }
 
@@ -200,16 +199,13 @@ func TestChaining(t *testing.T) {
 				return nameStarWith(&p, prefix)
 			}
 		}
-		findMax := func(acc *int, i *int) int {
-			if *i > *acc {
-				return *i
+		findMax := func(acc int, i int) int {
+			if i > acc {
+				return i
 			}
-			return *acc
+			return acc
 		}
-		mp := Map(Filter(persons, search("Mr.")), getAge)
-		// todo refactor
-		maxAge := Reduce(&mp, math.MinInt, findMax)
-		assert.Equal(t, 33, *maxAge)
+		assert.Equal(t, 33, Reduce(Map(Filter(persons, search("Mr.")), getAge), math.MinInt, findMax))
 	})
 }
 
