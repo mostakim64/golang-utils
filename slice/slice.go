@@ -94,14 +94,11 @@ func Flat[T any](arr [][]T) []T {
 
 // FlatMap flats the slice and maps the data using mapper Function.
 // It's a chain call of Reduce (flat) and Map.
-func FlatMap[T, V any](arr *[][]T, mapper Function[T, V]) *[]V {
+func FlatMap[T, V any](arr [][]T, mapper Function[T, V]) []V {
 	acc := func(acc []T, i []T) []T {
 		return append(acc, i...)
 	}
-	// todo refactor
-	red := Reduce(*arr, []T{}, acc)
-	out := Map(red, mapper)
-	return &out
+	return Map(Reduce(arr, []T{}, acc), mapper)
 }
 
 // Find finds the first element based on predicate condition and returns the reference of the element, if not found, returns nil

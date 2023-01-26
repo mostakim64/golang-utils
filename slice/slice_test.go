@@ -231,10 +231,7 @@ func TestFlatMap(t *testing.T) {
 		exp := []int{1, 4, 16, 25, 36, 49, 1, 4, 9}
 
 		square := func(i int) int { return i * i }
-
-		//  todo refactor
-		fm := FlatMap(&src, square)
-		assert.Equal(t, exp, *fm)
+		assert.Equal(t, exp, FlatMap(src, square))
 	})
 }
 
