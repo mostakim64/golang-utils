@@ -129,21 +129,21 @@ func TestFilter(t *testing.T) {
 	t.Run("filter numerics", func(t *testing.T) {
 		src := []int{1, 2, 3, 4}
 
-		isEven := func(item *int) bool { return *item%2 == 0 }
+		isEven := func(item int) bool { return item%2 == 0 }
 
-		evens := Filter(&src, isEven)
-		assert.Equal(t, []int{2, 4}, *evens)
+		evens := Filter(src, isEven)
+		assert.Equal(t, []int{2, 4}, evens)
 	})
 
 	t.Run("filter name starts with Mr.", func(t *testing.T) {
 		// searches starts with prefix
 		search := func(prefix string) Predicate[person] {
-			return func(p *person) bool {
-				return nameStarWith(p, prefix)
+			return func(p person) bool {
+				return nameStarWith(&p, prefix)
 			}
 		}
-		namesStartsWithMr := Filter(&persons, search("Mr. "))
-		assert.Equal(t, personsNameStartsWithMr, *namesStartsWithMr)
+		namesStartsWithMr := Filter(persons, search("Mr. "))
+		assert.Equal(t, personsNameStartsWithMr, namesStartsWithMr)
 	})
 }
 
@@ -196,8 +196,8 @@ func TestChaining(t *testing.T) {
 	t.Run("filter -> map -> reduce", func(t *testing.T) {
 		// searches starts with prefix
 		search := func(prefix string) Predicate[person] {
-			return func(p *person) bool {
-				return nameStarWith(p, prefix)
+			return func(p person) bool {
+				return nameStarWith(&p, prefix)
 			}
 		}
 		findMax := func(acc *int, i *int) int {
@@ -206,9 +206,8 @@ func TestChaining(t *testing.T) {
 			}
 			return *acc
 		}
+		mp := Map(Filter(persons, search("Mr.")), getAge)
 		// todo refactor
-		fil := Filter(&persons, search("Mr."))
-		mp := Map(*fil, getAge)
 		maxAge := Reduce(&mp, math.MinInt, findMax)
 		assert.Equal(t, 33, *maxAge)
 	})
@@ -246,14 +245,14 @@ func TestFlatMap(t *testing.T) {
 func TestFind(t *testing.T) {
 	t.Run("Find from numerics", func(t *testing.T) {
 		src := []int{1, 4, 16, 25, 36, 49, 1, 4, 9}
-		is49 := func(i *int) bool { return *i == 49 }
+		is49 := func(i int) bool { return i == 49 }
 
 		act := Find(&src, is49)
 		assert.Equal(t, 49, *act)
 	})
 
 	t.Run("Find from structs", func(t *testing.T) {
-		greaterThan30 := func(p *person) bool { return p.age > 30 }
+		greaterThan30 := func(p person) bool { return p.age > 30 }
 		act := Find(&persons, greaterThan30)
 
 		assert.Equal(t, persons[7], *act)
@@ -261,7 +260,7 @@ func TestFind(t *testing.T) {
 	})
 
 	t.Run("Find from structs, nil if not found", func(t *testing.T) {
-		greaterThan50 := func(p *person) bool { return p.age > 50 }
+		greaterThan50 := func(p person) bool { return p.age > 50 }
 		act := Find(&persons, greaterThan50)
 		assert.Nil(t, act)
 	})
@@ -270,18 +269,18 @@ func TestFind(t *testing.T) {
 func TestFindIndex(t *testing.T) {
 	t.Run("Find index from numerics", func(t *testing.T) {
 		src := []int{1, 4, 16, 25, 36, 49, 1, 4, 9}
-		is49 := func(i *int) bool { return *i == 49 }
+		is49 := func(i int) bool { return i == 49 }
 
 		assert.Equal(t, 5, FindIndex(&src, is49))
 	})
 
 	t.Run("Find index from structs", func(t *testing.T) {
-		greaterThan30 := func(p *person) bool { return p.age > 30 }
+		greaterThan30 := func(p person) bool { return p.age > 30 }
 		assert.Equal(t, 7, FindIndex(&persons, greaterThan30))
 	})
 
 	t.Run("Find index from structs, -1 if not found", func(t *testing.T) {
-		greaterThan50 := func(p *person) bool { return p.age > 50 }
+		greaterThan50 := func(p person) bool { return p.age > 50 }
 		assert.Equal(t, -1, FindIndex(&persons, greaterThan50))
 	})
 }
@@ -289,8 +288,8 @@ func TestFindIndex(t *testing.T) {
 func TestSome(t *testing.T) {
 	t.Run("find any match", func(t *testing.T) {
 		search := func(prefix string) Predicate[person] {
-			return func(p *person) bool {
-				return nameStarWith(p, prefix)
+			return func(p person) bool {
+				return nameStarWith(&p, prefix)
 			}
 		}
 		assert.True(t, Some(&persons, search("dr. ")))
@@ -301,7 +300,7 @@ func TestSome(t *testing.T) {
 func TestEvery(t *testing.T) {
 	t.Run("find every match", func(t *testing.T) {
 		greaterThanAge := func(age int) Predicate[person] {
-			return func(p *person) bool {
+			return func(p person) bool {
 				return p.age > age
 			}
 		}

@@ -5,7 +5,7 @@ package slice
 // Code Example: func(i int) string { return strconv.Itoa(i) }
 type Function[T, V any] func(item T) V
 
-type Predicate[T comparable] func(item *T) bool
+type Predicate[T comparable] func(item T) bool
 
 type Consumer[T any] func(item *T)
 
@@ -33,26 +33,26 @@ func Map[T, V any](arr []T, mapper Function[T, V]) []V {
 	return narr
 }
 
-// Filter takes the reference of slice of T type and a Predicate function.
+// Filter takes a slice of T type and a Predicate function.
 // Filters the element based on Predicate function.
 // Output slice's type is as same as the source slice but the output slice is completely different.
 // Elements of the source slice and output slice may or may not be the same (pointing to the same reference/address) depending on the elements of source slice.
 // Example:
 //		src := []int{1, 2, 3, 4}
-//		predicate := func(item *int) bool { return *item % 2 == 0 } // is even?
-//		out := Filter(&src, predicate) // out contains only the even values
+//		predicate := func(item int) bool { return item % 2 == 0 } // is even?
+//		out := Filter(src, predicate) // out contains only the even values
 //		----------------------
 //		Output:
-//			&[]int[2, 4]
+//			[]int[2, 4]
 // For more examples, see	-TestFilter
-func Filter[T comparable](arr *[]T, pred Predicate[T]) *[]T {
+func Filter[T comparable](arr []T, pred Predicate[T]) []T {
 	var narr []T
-	for _, item := range *arr {
-		if pred(&item) {
+	for _, item := range arr {
+		if pred(item) {
 			narr = append(narr, item)
 		}
 	}
-	return &narr
+	return narr
 }
 
 func ForEach[T any](arr *[]T, cons Consumer[T]) {
@@ -107,7 +107,7 @@ func FlatMap[T, V any](arr *[][]T, mapper Function[T, V]) *[]V {
 // Find finds the first element based on predicate condition and returns the reference of the element, if not found, returns nil
 func Find[T comparable](arr *[]T, pred Predicate[T]) *T {
 	for i := 0; i < len(*arr); i++ {
-		if pred(&(*arr)[i]) {
+		if pred((*arr)[i]) {
 			return &(*arr)[i]
 		}
 	}
@@ -117,7 +117,7 @@ func Find[T comparable](arr *[]T, pred Predicate[T]) *T {
 // FindIndex finds the first element's index based on predicate condition and returns the reference of the element, if not found, returns -1
 func FindIndex[T comparable](arr *[]T, pred Predicate[T]) int {
 	for i, item := range *arr {
-		if pred(&item) {
+		if pred(item) {
 			return i
 		}
 	}
@@ -128,7 +128,7 @@ func FindIndex[T comparable](arr *[]T, pred Predicate[T]) int {
 // Some returns true if any element of the source slice satisfies the condition of the Predicate, else returns false
 func Some[T comparable](arr *[]T, pred Predicate[T]) bool {
 	for _, item := range *arr {
-		if pred(&item) {
+		if pred(item) {
 			return true
 		}
 	}
@@ -139,7 +139,7 @@ func Some[T comparable](arr *[]T, pred Predicate[T]) bool {
 // it returns true if all elements of the source slice satisfy the condition of the Predicate, if any element fails to satisfy, it returns false.
 func Every[T comparable](arr *[]T, pred Predicate[T]) bool {
 	for _, item := range *arr {
-		if !pred(&item) {
+		if !pred(item) {
 			return false
 		}
 	}
