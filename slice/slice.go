@@ -26,7 +26,7 @@ type Accumulator[T, V any] func(acc V, item T) V
 // For more examples, see  	-Test_Map_type_conversion
 //							-Test_Map_extract_from_struct
 func Map[T, V any](arr []T, mapper Function[T, V]) []V {
-	var narr []V
+	narr := make([]V, 0, len(arr))
 	for _, item := range arr {
 		narr = append(narr, mapper(item))
 	}
@@ -74,11 +74,11 @@ func ForEach[T any](arr []T, cons Consumer[T]) {
 // 		-------------------------
 //		Output:
 //			6
-func Reduce[T, V any](arr []T, v V, acc Accumulator[T, V]) V {
+func Reduce[T, V any](arr []T, seed V, acc Accumulator[T, V]) V {
 	for _, item := range arr {
-		v = acc(v, item)
+		seed = acc(seed, item)
 	}
-	return v
+	return seed
 }
 
 // Flat creates a new slice by flattening first nested child slice and returns the new slice.
