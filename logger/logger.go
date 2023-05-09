@@ -79,7 +79,16 @@ func WarnWithFields(l interface{}, f fields) {
 	}
 }
 
-// Error logs a message at level Error on the standard logger.
+// StdError logs a message at level Error on the standard logger.
+func StdError(args ...interface{}) {
+	if logger.Level >= logrus.ErrorLevel {
+		entry := logger.WithFields(logrus.Fields{})
+		entry.Data["file"] = fileInfo(2)
+		entry.Error(args...)
+	}
+}
+
+// Error logs a message at level Error on the standard logger and sends alert to slack.
 //
 // if 1 item in args then there will be no metadata
 //

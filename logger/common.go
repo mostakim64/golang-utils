@@ -83,7 +83,16 @@ func (r *KlikitLogger) WarnWithFields(l interface{}, f map[string]interface{}) {
 	}
 }
 
-// Error logs a message at level Error on the KlikitLogger.
+// StdError logs a message at level Error on the KlikitLogger.
+func (r *KlikitLogger) StdError(args ...interface{}) {
+	if r.client.Level >= logrus.ErrorLevel {
+		entry := r.client.WithFields(logrus.Fields{})
+		entry.Data["file"] = fileInfo(2)
+		entry.Error(args...)
+	}
+}
+
+// Error logs a message at level Error on the KlikitLogger and sends alert to slack
 //
 // if 1 item in args then there will be no metadata
 //
