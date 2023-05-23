@@ -49,9 +49,13 @@ func TestOrderedMap_ReorderKeys_Uint(t *testing.T) {
 	om.Set(4, "four")
 	om.Set(2, "two")
 
-	om.ReorderKeys(true)
 	keys := om.Keys()
-	expectedKeys := []uint{1, 2, 3, 4}
+	expectedKeys := []uint{3, 1, 4, 2}
+	assert.Equal(t, expectedKeys, keys)
+
+	om.ReorderKeys(true)
+	keys = om.Keys()
+	expectedKeys = []uint{1, 2, 3, 4}
 	assert.Equal(t, expectedKeys, keys)
 
 	om.ReorderKeys(false)
@@ -63,13 +67,17 @@ func TestOrderedMap_ReorderKeys_Uint(t *testing.T) {
 func TestOrderedMap_ReorderKeys_String(t *testing.T) {
 	om := NewOrderedMap[string, int]()
 
-	om.Set("apple", 5)
 	om.Set("cherry", 3)
+	om.Set("apple", 5)
 	om.Set("banana", 1)
 
-	om.ReorderKeys(true)
 	keys := om.Keys()
-	expectedKeys := []string{"apple", "banana", "cherry"}
+	expectedKeys := []string{"cherry", "apple", "banana"}
+	assert.Equal(t, expectedKeys, keys)
+
+	om.ReorderKeys(true)
+	keys = om.Keys()
+	expectedKeys = []string{"apple", "banana", "cherry"}
 	assert.Equal(t, expectedKeys, keys)
 
 	om.ReorderKeys(false)
@@ -82,8 +90,8 @@ func TestOrderedMap_BulkSet(t *testing.T) {
 	om := NewOrderedMap[uint, string]()
 
 	data := map[uint]string{
-		1: "one",
 		2: "two",
+		1: "one",
 		3: "three",
 	}
 
