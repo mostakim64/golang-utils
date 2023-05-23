@@ -26,12 +26,12 @@ type (
 //
 // Example:
 //
-//		om := NewOrderedMap[uint, string]()
-//		om.Set(2, "two")
-//	 	om.Set(1, "one")
-//		om.Set(3, "three")
+//			om := NewOrderedMap[uint, string]()
+//			om.Set(2, "two")
+//			om.Set(1, "one")
+//			om.Set(3, "three")
 //
-//		om.Print()
+//			om.Print()
 //	 	-----------------------
 //		Output:
 //			Key: 2, Value: two
