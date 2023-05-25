@@ -1,7 +1,7 @@
 package slackit
 
 import (
-	"bitbucket.org/shadowchef/utils/methods"
+	"github.com/klikit/utils/methods"
 	"time"
 )
 

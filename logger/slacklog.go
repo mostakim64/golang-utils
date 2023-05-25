@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"bitbucket.org/shadowchef/utils/slackit"
+	"github.com/klikit/utils/slackit"
 )
 
 var slackitClient *slackit.SlackitClient
