@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"bitbucket.org/shadowchef/utils/logger"
+	"github.com/klikit/utils/logger"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"golang.org/x/time/rate"
@@ -49,13 +49,13 @@ func ByRemoteIPToken(c echo.Context) (string, error) {
 
 // RateLimiter, a echo middleware to rate limiting an endpoint
 //
-// Example of applying rate limiter middleware in a route
+// # Example of applying rate limiter middleware in a route
 //
 // import (
 //
-//   m "bitbucket.org/shadowchef/utils/middlewares/echo"
+//	m "github.com/klikit/utils/middlewares/echo"
 //
-//   "github.com/labstack/echo/v4"
+//	"github.com/labstack/echo/v4"
 //
 // )
 //
@@ -68,7 +68,6 @@ func ByRemoteIPToken(c echo.Context) (string, error) {
 // ratePerUnit := 1
 //
 // g.POST("/password/forgot", c.ForgotPassword, m.RateLimiter(m.ByEmailToken, unit, ratePerUnit))
-//
 func RateLimiter(tokenIdentifier TokenIdentifier, unit string, ratePerUnit int) echo.MiddlewareFunc {
 	rateLimiter := configureRateLimiterStore(unit, ratePerUnit)
 	return func(next echo.HandlerFunc) echo.HandlerFunc {

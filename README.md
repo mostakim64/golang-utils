@@ -30,7 +30,7 @@ package main
 import (
 	"fmt"
 
-	"bitbucket.org/shadowchef/utils/methods"
+	"github.com/klikit/utils/methods"
 )
 
 func main() {
@@ -44,7 +44,7 @@ package main
 import (
 	"fmt"
 
-	"bitbucket.org/shadowchef/utils/logger"
+	"github.com/klikit/utils/logger"
 )
 
 func main() {
@@ -61,7 +61,7 @@ func main() {
 ```go
 package main
 
-import "bitbucket.org/shadowchef/utils/logger"
+import "github.com/klikit/utils/logger"
 
 func main() {
 	kLogger := logger.NewLoggerClient()
@@ -75,7 +75,7 @@ func main() {
 package main
 
 import (
-	"bitbucket.org/shadowchef/utils/slackit"
+	"github.com/klikit/utils/slackit"
 	"fmt"
 )
 
@@ -113,7 +113,7 @@ func main() {
 package main
 
 import (
-	"bitbucket.org/shadowchef/utils/monitor"
+	"github.com/klikit/utils/monitor"
 	"github.com/labstack/echo-contrib/prometheus"
 	"github.com/labstack/echo/v4"
 )

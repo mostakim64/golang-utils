@@ -3,7 +3,7 @@ package logger
 import (
 	"net/http"
 
-	"bitbucket.org/shadowchef/utils/slackit"
+	"github.com/klikit/utils/slackit"
 	"github.com/sirupsen/logrus"
 )
 

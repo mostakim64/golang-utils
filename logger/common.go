@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"strings"
 
-	"bitbucket.org/shadowchef/utils/slackit"
+	"github.com/klikit/utils/slackit"
 	"github.com/sirupsen/logrus"
 )
 
