@@ -230,6 +230,25 @@ func TestOrderedMap_Values(t *testing.T) {
 	assert.Equal(t, expectedValues, values)
 }
 
+func TestOrderedMap_Values_Order(t *testing.T) {
+	om := NewOrderedMap[uint, string]()
+
+	values := om.Values()
+	assert.Empty(t, values)
+
+	om.Set(2, "two")
+	om.Set(1, "one")
+	om.Set(3, "three")
+
+	om.Print()
+	om.ReorderKeys(true)
+	
+
+	values = om.Values()
+	expectedValues := []string{"one", "two", "three"}
+	assert.Equal(t, expectedValues, values)
+}
+
 func TestOrderedMap_Clear(t *testing.T) {
 	om := NewOrderedMap[uint, string]()
 
