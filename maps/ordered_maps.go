@@ -144,10 +144,8 @@ func (om *OrderedMap[K, V]) stringLess(a, b string) bool {
 // Keys will return a new slice of keys of type K
 func (om *OrderedMap[K, V]) Keys() []K {
 	keys := make([]K, 0, om.keys.Len())
-	for elem := om.keys.Front(); elem != nil; elem = elem.Next() {
-		keyValue := elem.Value.(*KeyValue[K, V])
-		key := reflect.ValueOf(keyValue.Key).Interface().(K)
-		keys = append(keys, key)
+	for kv := range om.Iterate() {
+		keys = append(keys, reflect.ValueOf(kv.Key).Interface().(K))
 	}
 	return keys
 }
@@ -155,22 +153,23 @@ func (om *OrderedMap[K, V]) Keys() []K {
 // Values will return a new slice of values of type V
 func (om *OrderedMap[K, V]) Values() []V {
 	values := make([]V, 0, om.keys.Len())
-	for elem := om.keys.Front(); elem != nil; elem = elem.Next() {
-		values = append(values, elem.Value.(*KeyValue[K, V]).Value)
+
+	for kv := range om.Iterate() {
+		values = append(values, kv.Value)
 	}
+
 	return values
 }
 
 // Print will log the key value of ordered map in the console
 func (om *OrderedMap[K, V]) Print() {
-	for elem := om.keys.Front(); elem != nil; elem = elem.Next() {
-		keyValue := elem.Value.(*KeyValue[K, V])
-		fmt.Printf("Key: %v, Value: %v\n", keyValue.Key, keyValue.Value)
+	for kv := range om.Iterate() {
+		fmt.Printf("Key: %v, Value: %v\n", kv.Key, kv.Value)
 	}
 }
 
 // Iterate will go through the ordered map and return a channel of KeyValue pair of type K, V
-// until OrderedMap if nil or empty
+// until OrderedMap is nil or empty
 func (om *OrderedMap[K, V]) Iterate() <-chan KeyValue[K, V] {
 	ch := make(chan KeyValue[K, V])
 
@@ -192,9 +191,8 @@ func (om *OrderedMap[K, V]) ToJSON() ([]byte, error) {
 	jsonMap := make(map[K]V)
 
 	// Populate the map with the Key-Value pairs from the OrderedMap
-	for elem := om.keys.Front(); elem != nil; elem = elem.Next() {
-		keyValue := elem.Value.(*KeyValue[K, V])
-		jsonMap[keyValue.Key] = keyValue.Value
+	for kv := range om.Iterate() {
+		jsonMap[kv.Key] = kv.Value
 	}
 
 	// Marshal the map into JSON
