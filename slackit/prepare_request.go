@@ -123,7 +123,7 @@ func PrepareAttachmentBody(req ClientRequest) []Attachments {
 		detailsBlocks = append(detailsBlocks, detailsBlock)
 	}
 
-	metadataText := addText("mrkdwn", "*Metadata:*\n"+metadata, nil)
+	metadataText := addText("mrkdwn", "*Metadata:*\n"+"```"+metadata+"```", nil)
 	metadataBlock := addSingleBlock("section", metadataText)
 
 	blocks := []Blocks{headerBlock, serviceInfoBlock, summaryBlock, metadataBlock}
