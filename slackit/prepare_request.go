@@ -2,6 +2,7 @@ package slackit
 
 import (
 	"github.com/klikit/utils/methods"
+	"strings"
 	"time"
 )
 
@@ -67,6 +68,11 @@ func PrepareAttachmentBody(req ClientRequest) []Attachments {
 	details := req.Details
 	status := req.Status
 	mentions := req.Mentions
+
+	// url contains &'s unicode replace it with the actual character
+	if strings.Contains(metadata, "\\u0026") {
+		metadata = strings.Replace(metadata, "\\u0026", "&", -1)
+	}
 
 	headerTitle := getHeader(status)
 
