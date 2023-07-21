@@ -2,6 +2,7 @@ package slackit
 
 import (
 	"github.com/klikit/utils/methods"
+	"strings"
 	"time"
 )
 
@@ -68,6 +69,11 @@ func PrepareAttachmentBody(req ClientRequest) []Attachments {
 	status := req.Status
 	mentions := req.Mentions
 
+	// url contains &'s unicode replace it with the actual character
+	if strings.Contains(metadata, "\\u0026") {
+		metadata = strings.Replace(metadata, "\\u0026", "&", -1)
+	}
+
 	headerTitle := getHeader(status)
 
 	if req.Header != "" {
@@ -123,7 +129,7 @@ func PrepareAttachmentBody(req ClientRequest) []Attachments {
 		detailsBlocks = append(detailsBlocks, detailsBlock)
 	}
 
-	metadataText := addText("mrkdwn", "*Metadata:*\n"+metadata, nil)
+	metadataText := addText("mrkdwn", "*Metadata:*\n"+"```"+metadata+"```", nil)
 	metadataBlock := addSingleBlock("section", metadataText)
 
 	blocks := []Blocks{headerBlock, serviceInfoBlock, summaryBlock, metadataBlock}
