@@ -199,11 +199,11 @@ func PrettyPrint(msg string, data interface{}) {
 	}
 }
 
-func DayAvailabilityToMask(availability []int) int {
+func BitsToMask(bits []int, numberOfBits int) int {
 	mask := 0
 
-	for i := 0; i < 7; i++ {
-		if InArray(i, availability) {
+	for i := 0; i < numberOfBits; i++ {
+		if InArray(i, bits) {
 			mask = mask + int(math.Pow(2, float64(i)))
 		}
 	}
@@ -211,16 +211,16 @@ func DayAvailabilityToMask(availability []int) int {
 	return mask
 }
 
-func DayAvailabilityFromMask(mask int) []int {
-	availability := []int{}
+func MaskToBits(mask int, numberOfBits int) []int {
+	bits := []int{}
 
-	for i := 0; i < 7; i++ {
+	for i := 0; i < numberOfBits; i++ {
 		if mask&(1<<i) > 0 {
-			availability = append(availability, i)
+			bits = append(bits, i)
 		}
 	}
 
-	return availability
+	return bits
 }
 
 func Abbreviate(s string) string {
