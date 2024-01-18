@@ -199,28 +199,45 @@ func PrettyPrint(msg string, data interface{}) {
 	}
 }
 
-func BitsToMask(bits []int, numberOfBits int) int {
-	mask := 0
+func BitsToMask(bits []int, bitSize int) uint64 {
+	mask := uint64(0)
 
-	for i := 0; i < numberOfBits; i++ {
+	for i := 0; i < bitSize; i++ {
 		if InArray(i, bits) {
-			mask = mask + int(math.Pow(2, float64(i)))
+			mask = mask + UintPowOfTwo(i)
 		}
 	}
 
 	return mask
 }
 
-func MaskToBits(mask int, numberOfBits int) []int {
+func MaskToBits(mask uint64, bitSize int) []int {
 	bits := []int{}
 
-	for i := 0; i < numberOfBits; i++ {
+	for i := 0; i < bitSize; i++ {
 		if mask&(1<<i) > 0 {
 			bits = append(bits, i)
 		}
 	}
 
 	return bits
+}
+
+func UintPowOfTwo(p int) uint64 {
+	if p == 0 {
+		return uint64(1)
+	}
+
+	if p == 1 {
+		return uint64(2)
+	}
+
+	res := uint64(2)
+	for i := 1; i < p; i++ {
+		res *= uint64(2)
+	}
+
+	return res
 }
 
 func Abbreviate(s string) string {
