@@ -253,24 +253,23 @@ func getLogCaller(skip int) []string {
 	depth := runtime.Callers(skip, pcs)
 	frames := runtime.CallersFrames(pcs[:depth])
 
-	var fileShortList []string
-	var fileLongList []string
+	var files []string
 
 	acceptedPrefix := "github.com/klikit"
 
 	for f, again := frames.Next(); again; f, again = frames.Next() {
 		fileName := getFileName(f.File)
 		if strings.Contains(fileName, acceptedPrefix) {
-			fileShortList = append(fileShortList, fmt.Sprintf("%s:%d", strings.TrimPrefix(fileName, acceptedPrefix), f.Line))
+			files = append(files, fmt.Sprintf("%s:%d", strings.TrimPrefix(fileName, acceptedPrefix), f.Line))
+		} else {
+			if strings.Contains(fileName, "src/runtime") {
+				continue
+			}
+			files = append(files, fmt.Sprintf("%s:%d", fileName, f.Line))
 		}
-		fileLongList = append(fileLongList, fmt.Sprintf("%s:%d", fileName, f.Line))
 	}
 
-	if len(fileShortList) > 0 {
-		return fileShortList
-
-	}
-	return fileLongList
+	return files
 }
 
 func getFileName(file string) string {
