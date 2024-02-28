@@ -14,6 +14,7 @@ type SlacklogRequest struct {
 	Message string `json:"message"`
 	File    string `json:"file"`
 	Level   string `json:"level"`
+	Trace   string `json:"trace"`
 }
 
 type SlacklogRequestWithApiError struct {

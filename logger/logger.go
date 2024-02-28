@@ -127,12 +127,14 @@ func ErrorWithTrace(args ...interface{}) {
 	if logger.Level >= logrus.ErrorLevel {
 		entry := logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = fileInfo(2)
-		entry.Data["trace"] = getLogCaller(3)
+		tracer := getLogCaller(3)
+		entry.Data["trace"] = tracer
 		entry.Error(args...)
 		slackLogReq := SlacklogRequest{
 			Message: fmt.Sprint(args...),
 			File:    fileAddressInfo(2),
 			Level:   "error",
+			Trace:   tracer,
 		}
 		if err := ProcessAndSendWithMeta(slackLogReq, metaData, slackit.Alert, "Error"); err != nil {
 			Warn(err)
