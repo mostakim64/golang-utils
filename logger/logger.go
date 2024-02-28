@@ -116,6 +116,30 @@ func Error(args ...interface{}) {
 	}
 }
 
+func ErrorWithTrace(args ...interface{}) {
+	var metaData interface{}
+
+	if len(args) > 1 {
+		metaData = args[0]
+		args = args[1:]
+	}
+
+	if logger.Level >= logrus.ErrorLevel {
+		entry := logger.WithFields(logrus.Fields{})
+		entry.Data["file"] = fileInfo(2)
+		entry.Data["trace"] = getLogCaller(3)
+		entry.Error(args...)
+		slackLogReq := SlacklogRequest{
+			Message: fmt.Sprint(args...),
+			File:    fileAddressInfo(2),
+			Level:   "error",
+		}
+		if err := ProcessAndSendWithMeta(slackLogReq, metaData, slackit.Alert, "Error"); err != nil {
+			Warn(err)
+		}
+	}
+}
+
 // Error logs a message at level Error on the standard logger with request, response and metadata
 func ApiError(rs RequestResponseMap, metaData interface{}, args ...interface{}) {
 	if logger.Level >= logrus.ErrorLevel {
@@ -220,6 +244,35 @@ func fileInfo(skip int) string {
 		}
 	}
 	return fmt.Sprintf("%s:%d", file, line)
+}
+
+func getLogCaller(skip int) string {
+	pcs := make([]uintptr, 25)
+	depth := runtime.Callers(skip, pcs)
+	frames := runtime.CallersFrames(pcs[:depth])
+
+	var files []string
+	acceptedPrefix := "github.com/klikit"
+
+	for f, again := frames.Next(); again; f, again = frames.Next() {
+		fileName := getFileName(f.File)
+		if strings.Contains(fileName, acceptedPrefix) {
+			files = append(files, fmt.Sprintf("%s:%d", strings.TrimPrefix(fileName, acceptedPrefix), f.Line))
+		}
+	}
+
+	return strings.Join(files, "; ")
+}
+
+func getFileName(file string) string {
+	parts := strings.Split(file, "/")
+	for i := len(parts) - 1; i >= 0; i-- {
+		if strings.HasSuffix(parts[i], ".com") {
+			return strings.Join(parts[i:], "/")
+		}
+	}
+
+	return file
 }
 
 func fileAddressInfo(skip int) string {
