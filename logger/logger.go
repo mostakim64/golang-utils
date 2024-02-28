@@ -127,7 +127,7 @@ func ErrorWithTrace(args ...interface{}) {
 	if logger.Level >= logrus.ErrorLevel {
 		entry := logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = fileInfo(2)
-		tracer := getLogCaller(3)
+		tracer := getLogCaller(2)
 		entry.Data["trace"] = tracer
 		entry.Error(args...)
 		slackLogReq := SlacklogRequest{
@@ -260,6 +260,8 @@ func getLogCaller(skip int) string {
 		fileName := getFileName(f.File)
 		if strings.Contains(fileName, acceptedPrefix) {
 			files = append(files, fmt.Sprintf("%s:%d", strings.TrimPrefix(fileName, acceptedPrefix), f.Line))
+		} else {
+			files = append(files, fmt.Sprintf("%s:%d", fileName, f.Line))
 		}
 	}
 
