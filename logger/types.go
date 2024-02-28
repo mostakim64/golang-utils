@@ -11,10 +11,10 @@ import (
 type fields logrus.Fields
 
 type SlacklogRequest struct {
-	Message string `json:"message"`
-	File    string `json:"file"`
-	Level   string `json:"level"`
-	Trace   string `json:"trace,omitempty"`
+	Message string   `json:"message"`
+	File    string   `json:"file"`
+	Level   string   `json:"level"`
+	Trace   []string `json:"trace,omitempty"`
 }
 
 type SlacklogRequestWithApiError struct {

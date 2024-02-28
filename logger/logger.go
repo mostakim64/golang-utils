@@ -128,7 +128,7 @@ func ErrorWithTrace(args ...interface{}) {
 		entry := logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = fileInfo(2)
 		tracer := getLogCaller(2)
-		entry.Data["trace"] = tracer
+		entry.Data["trace"] = strings.Join(tracer, "; ")
 		entry.Error(args...)
 		slackLogReq := SlacklogRequest{
 			Message: fmt.Sprint(args...),
@@ -248,24 +248,29 @@ func fileInfo(skip int) string {
 	return fmt.Sprintf("%s:%d", file, line)
 }
 
-func getLogCaller(skip int) string {
+func getLogCaller(skip int) []string {
 	pcs := make([]uintptr, 25)
 	depth := runtime.Callers(skip, pcs)
 	frames := runtime.CallersFrames(pcs[:depth])
 
-	var files []string
+	var fileShortList []string
+	var fileLongList []string
+
 	acceptedPrefix := "github.com/klikit"
 
 	for f, again := frames.Next(); again; f, again = frames.Next() {
 		fileName := getFileName(f.File)
 		if strings.Contains(fileName, acceptedPrefix) {
-			files = append(files, fmt.Sprintf("%s:%d", strings.TrimPrefix(fileName, acceptedPrefix), f.Line))
-		} else {
-			files = append(files, fmt.Sprintf("%s:%d", fileName, f.Line))
+			fileShortList = append(fileShortList, fmt.Sprintf("%s:%d", strings.TrimPrefix(fileName, acceptedPrefix), f.Line))
 		}
+		fileLongList = append(fileLongList, fmt.Sprintf("%s:%d", fileName, f.Line))
 	}
 
-	return strings.Join(files, "; ")
+	if len(fileShortList) > 0 {
+		return fileShortList
+
+	}
+	return fileLongList
 }
 
 func getFileName(file string) string {
