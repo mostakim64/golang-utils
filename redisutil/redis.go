@@ -15,8 +15,10 @@ type Redis struct {
 	RedisClient *redis.Client
 }
 
-/*Connect method takes the redis credentials and prefix as input. It's then
-connect to redis instance and return Redis util object otherwise create panic */
+/*
+Connect method takes the redis credentials and prefix as input. It's then
+connect to redis instance and return Redis util object otherwise create panic
+*/
 func Connect(host, port, pass string, db int, prefix string) *Redis {
 	redisClient := redis.NewClient(&redis.Options{
 		Addr:     host + ":" + port,
