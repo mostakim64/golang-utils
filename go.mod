@@ -6,7 +6,7 @@ require (
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/labstack/echo-contrib v0.15.0
 	github.com/labstack/echo/v4 v4.10.2
-	github.com/sirupsen/logrus v1.9.2
+	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.3
 	golang.org/x/time v0.3.0
 )
@@ -16,6 +16,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/go-redis/redis v6.15.9+incompatible // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
