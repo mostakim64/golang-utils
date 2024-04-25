@@ -124,6 +124,44 @@ func main() {
 }
 ```
 
+### redisutil package
+```go
+package main
+
+import (
+	"github.com/klikit/utils/redisutil"
+	"fmt"
+)
+
+var redissutil *redisutil.Redis
+//This method should be called once at the bootstrapping of service
+func ConnectRedis() {
+	host := "127.0.0.1"
+	port := "6379"
+	pass := ""
+	db := 1
+	prefix := "map:"
+	redissutil = redisutil.Connect(host, port, pass, db, prefix)
+}
+
+func Redis() *redisutil.Redis {
+	return redissutil
+}
+func main() {
+	ConnectRedis()
+	err := Redis().Set("test_key", "test_value", 60)
+	if err != nil {
+		fmt.Println("Failed to set redis value")
+    }
+	value, err := Redis().Get("test_key")
+	if err != nil {
+		fmt.Println("Failed to get redis value")
+    }
+	fmt.Println("Value found: ", value)
+}
+
+```
+
 
 To run tests, run the following command
 
