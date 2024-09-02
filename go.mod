@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/go-redis/redis v6.15.9+incompatible
+	github.com/jftuga/geodist v1.0.0
 	github.com/labstack/echo-contrib v0.15.0
 	github.com/labstack/echo/v4 v4.10.2
 	github.com/sirupsen/logrus v1.9.3
