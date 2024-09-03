@@ -6,6 +6,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/jftuga/geodist"
+	"github.com/klikit/utils/consts"
 	"math"
 	"math/rand"
 	"reflect"
@@ -325,4 +327,21 @@ func GenerateKlikitStoreID(brandID, branchID int, isFPSingleDeviceStore bool) st
 
 func SleepForXMintue(x int) {
 	time.Sleep(time.Duration(x) * time.Second)
+}
+
+func CalculateVincentyDistance(lat1, lon1, lat2, lon2 float64, method int) (float64, float64, error) {
+	var loc1 = geodist.Coord{Lat: lat1, Lon: lon1}
+	var loc2 = geodist.Coord{Lat: lat2, Lon: lon2}
+
+	var miles, km float64
+	var err error
+
+	switch method {
+	case consts.HaversineDistance:
+		miles, km = geodist.HaversineDistance(loc1, loc2)
+	case consts.VincentyDistance:
+		miles, km, err = geodist.VincentyDistance(loc1, loc2)
+	}
+
+	return miles, km, err
 }
