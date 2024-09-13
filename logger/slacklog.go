@@ -53,7 +53,7 @@ func ProcessAndSend(slackLogReq SlacklogRequest, status int, logType string) err
 	return nil
 }
 
-func ProcessAndSendWithMeta(slackLogReq SlacklogRequest, metaData interface{}, status int, logType string) error {
+func ProcessAndSendWithMeta(slackLogReq SlackRequest, metaData interface{}, status int, logType string) error {
 
 	if slackitClient != nil {
 
@@ -68,7 +68,7 @@ func ProcessAndSendWithMeta(slackLogReq SlacklogRequest, metaData interface{}, s
 		}
 		if msg != nil {
 			clientReq := slackit.ClientRequest{
-				Header:      slackLogReq.Level,
+				Header:      slackLogReq.GetLevel(),
 				ServiceName: serviceName,
 				Summary:     logType + " Log from " + serviceName,
 				Metadata:    string(metaJson),
