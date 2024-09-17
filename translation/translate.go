@@ -3,7 +3,16 @@ package translation
 import (
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/klikit/utils/slackit"
 )
+
+var slackitClient slackit.SlackitClient
+var callerService string
+
+func InitLogger(slackURL string, service string) {
+	slackitClient = slackit.NewSlackitClient(slackURL)
+	callerService = service
+}
 
 func TranslateError(err error, lang string) error {
 	var validationErrors validation.Errors
@@ -14,7 +23,9 @@ func TranslateError(err error, lang string) error {
 
 	caller := GetCallerFuncName()
 	defer func() {
-		sendNotification(caller, lang, missingFields, missingTranslation)
+		if len(missingFields) > 0 || missingTranslation != "" {
+			sendNotification(caller, lang, missingFields, missingTranslation)
+		}
 	}()
 
 	if errors.As(err, &validationErrors) {

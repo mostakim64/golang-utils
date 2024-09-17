@@ -1,9 +1,11 @@
 package translation
 
 import (
+	"encoding/json"
+	"fmt"
 	"runtime"
 
-	"github.com/klikit/utils/logger"
+	"github.com/klikit/utils/slackit"
 )
 
 func GetCallerFuncName() string {
@@ -29,10 +31,6 @@ type MissingTranslationInfo struct {
 	Fields  []string `json:"fields,omitempty"`
 }
 
-func (MissingTranslationInfo) GetLevel() string {
-	return "info"
-}
-
 func sendNotification(
 	caller string,
 	lang string,
@@ -47,15 +45,27 @@ func sendNotification(
 		message = "Translation not found for the error"
 	}
 
-	logger.PushSlack(
-		MissingTranslationMeta{
-			Caller:   caller,
-			Language: lang,
-		},
-		MissingTranslationInfo{
-			Message: message,
-			Error:   err,
-			Fields:  fields,
-		},
-	)
+	metadata := MissingTranslationMeta{
+		Caller:   caller,
+		Language: lang,
+	}
+	metaByte, _ := json.MarshalIndent(metadata, "", " ")
+
+	details := MissingTranslationInfo{
+		Message: message,
+		Error:   err,
+		Fields:  fields,
+	}
+	detailsByte, _ := json.MarshalIndent(details, "", " ")
+
+	request := slackit.ClientRequest{
+		Header:      fmt.Sprintf("Missing translation in %s", callerService),
+		ServiceName: callerService,
+		Summary:     message,
+		Metadata:    string(metaByte),
+		Details:     string(detailsByte),
+		Status:      slackit.Warning,
+	}
+
+	_ = slackitClient.Send(request)
 }

@@ -304,9 +304,3 @@ func processLog(args ...interface{}) string {
 
 	return errMsgBuffer.String()
 }
-
-func PushSlack(meta interface{}, data SlackRequest) {
-	if err := ProcessAndSendWithMeta(data, meta, slackit.Warning, "Info"); err != nil {
-		Warn(err)
-	}
-}
