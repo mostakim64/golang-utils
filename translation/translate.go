@@ -18,7 +18,7 @@ func TranslateError(err error, lang string) error {
 	var validationErrors validation.Errors
 	translatedErrors := make(validation.Errors)
 
-	var missingFields []string
+	missingFields := make(map[string]string)
 	var missingTranslation string
 
 	caller := GetCallerFuncName()
@@ -40,7 +40,7 @@ func TranslateError(err error, lang string) error {
 					}
 				}
 			}
-			missingFields = append(missingFields, field)
+			missingFields[field] = validationErr.Error()
 			translatedErrors[field] = validationErr
 		}
 		return translatedErrors

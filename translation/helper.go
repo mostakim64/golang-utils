@@ -26,15 +26,15 @@ type MissingTranslationMeta struct {
 }
 
 type MissingTranslationInfo struct {
-	Message string   `json:"message,omitempty"`
-	Error   string   `json:"error,omitempty"`
-	Fields  []string `json:"fields,omitempty"`
+	Message string            `json:"message,omitempty"`
+	Error   string            `json:"error,omitempty"`
+	Fields  map[string]string `json:"fields,omitempty"`
 }
 
 func sendNotification(
 	caller string,
 	lang string,
-	fields []string,
+	fields map[string]string,
 	err string,
 ) {
 
