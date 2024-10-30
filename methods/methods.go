@@ -145,6 +145,16 @@ func ConvertToIntSlice(value string) []int {
 	return ids
 }
 
+// ConvertIntSliceToString convert []int to string
+func ConvertIntSliceToString(ids []int) string {
+	var idList []string
+	for _, i := range ids {
+		idList = append(idList, strconv.Itoa(i))
+	}
+	idStr := strings.Join(idList, ",")
+	return idStr
+}
+
 func StructToStruct(input interface{}, output interface{}) error {
 	if b, err := json.Marshal(input); err == nil {
 		return json.Unmarshal(b, &output)
