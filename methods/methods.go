@@ -339,3 +339,14 @@ func CalculateVincentyDistance(lat1, lon1, lat2, lon2 float64) (float64, float64
 
 	return miles, km, err
 }
+
+// RemoveValueFromSlice removes a specified value from a slice of any type.
+func RemoveValueFromSlice[T comparable](arr []T, valueToRemove T) []T {
+	var result []T
+	for _, elem := range arr {
+		if elem != valueToRemove {
+			result = append(result, elem)
+		}
+	}
+	return result
+}
