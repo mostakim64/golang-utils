@@ -145,6 +145,16 @@ func ConvertToIntSlice(value string) []int {
 	return ids
 }
 
+// ConvertIntSliceToString convert []int to string
+func ConvertIntSliceToString(ids []int) string {
+	var idList []string
+	for _, i := range ids {
+		idList = append(idList, strconv.Itoa(i))
+	}
+	idStr := strings.Join(idList, ",")
+	return idStr
+}
+
 func StructToStruct(input interface{}, output interface{}) error {
 	if b, err := json.Marshal(input); err == nil {
 		return json.Unmarshal(b, &output)
@@ -338,4 +348,15 @@ func CalculateVincentyDistance(lat1, lon1, lat2, lon2 float64) (float64, float64
 	miles, km, err = geodist.VincentyDistance(loc1, loc2)
 
 	return miles, km, err
+}
+
+// RemoveValueFromSlice removes a specified value from a slice of any type.
+func RemoveValueFromSlice[T comparable](arr []T, valueToRemove T) []T {
+	var result []T
+	for _, elem := range arr {
+		if elem != valueToRemove {
+			result = append(result, elem)
+		}
+	}
+	return result
 }
