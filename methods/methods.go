@@ -6,13 +6,14 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/jftuga/geodist"
 	"math"
 	"math/rand"
 	"reflect"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/jftuga/geodist"
 )
 
 func MapToStruct(input map[string]interface{}, output interface{}) error {
@@ -359,4 +360,21 @@ func RemoveValueFromSlice[T comparable](arr []T, valueToRemove T) []T {
 		}
 	}
 	return result
+}
+
+func SlicesHaveSameValues[T comparable](a, b []T) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	counts := make(map[T]int)
+	for _, v := range a {
+		counts[v]++
+	}
+	for _, v := range b {
+		counts[v]--
+		if counts[v] < 0 {
+			return false
+		}
+	}
+	return true
 }
