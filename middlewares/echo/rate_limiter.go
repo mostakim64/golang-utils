@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/klikit/utils/logger"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/mostakim64/golang-utils/logger"
 	"golang.org/x/time/rate"
 )
 

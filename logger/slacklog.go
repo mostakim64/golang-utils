@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/klikit/utils/slackit"
+	"github.com/mostakim64/golang-utils/slackit"
 )
 
 var slackitClient *slackit.SlackitClient

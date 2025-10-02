@@ -1,4 +1,4 @@
-module github.com/klikit/utils
+module github.com/mostakim64/golang-utils
 
 go 1.19
 

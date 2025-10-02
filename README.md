@@ -1,5 +1,5 @@
 
-# Shadowchef Utils
+# Golang Utils
 
 Some common utils functions and log functions have been written here for common usage on other services. 
 
@@ -14,13 +14,13 @@ Configure `.gitconfig` to include the below code
 
 To setup private bitbucket cloud
 ```
-git config --global url."git@bitbucket.org:shadowchef".insteadOf "https://bitbucket.org/shadowchef"
+git config --global url."git@github.com:mostakim64/golang-utils.git""
 ```
 
 Install Utils with `go get`.
 
 ```bash
-GOPRIVATE=bitbucket.org/shadowchef/utils go get bitbucket.org/shadowchef/utils
+GOPRIVATE=git@github.com:mostakim64/golang-utils.git go get git@github.com:mostakim64/golang-utils
 ```
 
 ## Usage
@@ -30,7 +30,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/klikit/utils/methods"
+	"github.com/mostakim64/golang-utils/methods"
 )
 
 func main() {
@@ -44,7 +44,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/klikit/utils/logger"
+	"github.com/mostakim64/golang-utils/logger"
 )
 
 func main() {
@@ -61,7 +61,7 @@ func main() {
 ```go
 package main
 
-import "github.com/klikit/utils/logger"
+import "github.com/mostakim64/golang-utils/logger"
 
 func main() {
 	kLogger := logger.NewLoggerClient()
@@ -75,12 +75,12 @@ func main() {
 package main
 
 import (
-	"github.com/klikit/utils/slackit"
+	"github.com/mostakim64/golang-utils/slackit"
 	"fmt"
 )
 
 func main() {
-	webhookUrl := "https://hooks.slack.com/services/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"
+	webhookUrl := "{test_webhook}"
 	header := "Alert"
 	summary := "Alert Summary"
 	details := "Details"
@@ -113,7 +113,7 @@ func main() {
 package main
 
 import (
-	"github.com/klikit/utils/monitor"
+	"github.com/mostakim64/golang-utils/monitor"
 	"github.com/labstack/echo-contrib/prometheus"
 	"github.com/labstack/echo/v4"
 )
@@ -129,7 +129,7 @@ func main() {
 package main
 
 import (
-	"github.com/klikit/utils/redisutil"
+	"github.com/mostakim64/golang-utils/redisutil"
 	"fmt"
 )
 

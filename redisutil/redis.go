@@ -3,9 +3,9 @@ package redisutil
 import (
 	"encoding/json"
 	"github.com/go-redis/redis"
-	"github.com/klikit/utils/logger"
-	utils "github.com/klikit/utils/methods"
-	"github.com/klikit/utils/redisutil/errutil"
+	"github.com/mostakim64/golang-utils/logger"
+	utils "github.com/mostakim64/golang-utils/methods"
+	"github.com/mostakim64/golang-utils/redisutil/errutil"
 	"strconv"
 	"time"
 )

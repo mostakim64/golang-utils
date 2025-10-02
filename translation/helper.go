@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/klikit/utils/slackit"
+	"github.com/mostakim64/golang-utils/slackit"
 )
 
 func GetCallerFuncName() string {

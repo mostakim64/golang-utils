@@ -3,7 +3,7 @@ package logger
 import (
 	"net/http"
 
-	"github.com/klikit/utils/slackit"
+	"github.com/mostakim64/golang-utils/slackit"
 	"github.com/sirupsen/logrus"
 )
 

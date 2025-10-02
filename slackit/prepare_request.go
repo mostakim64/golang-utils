@@ -1,7 +1,7 @@
 package slackit
 
 import (
-	"github.com/klikit/utils/methods"
+	"github.com/mostakim64/golang-utils/methods"
 	"strings"
 	"time"
 )

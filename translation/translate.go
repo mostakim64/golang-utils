@@ -3,7 +3,7 @@ package translation
 import (
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/klikit/utils/slackit"
+	"github.com/mostakim64/golang-utils/slackit"
 	"sync"
 )
 
